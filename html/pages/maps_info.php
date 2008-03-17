@@ -1,11 +1,11 @@
 <?
 $map = $_GET[map];
-$realmap = my_addslashes($_GET[map]);
-$realmap = "".$realmap.".unr";
+$bugmap = my_addslashes($_GET[map]);
+$realmap = $bugmap.".unr";
 
 $map_matches = small_query("SELECT COUNT(id) as matchcount, SUM(t0score+t1score+t2score+t3score) AS gamescore,
-SUM(gametime) AS gametime, SUM(kills) AS kills, SUM(suicides) AS suicides FROM uts_match WHERE mapfile = '$realmap'");
-$map_last = small_query("SELECT time FROM uts_match WHERE mapfile = '$realmap' ORDER BY time DESC LIMIT 0,1");
+SUM(gametime) AS gametime, SUM(kills) AS kills, SUM(suicides) AS suicides FROM uts_match WHERE mapfile = '$realmap' OR mapfile = '$bugmap'");
+$map_last = small_query("SELECT time FROM uts_match WHERE mapfile = '$realmap' OR mapfile = '$bugmap' ORDER BY time DESC LIMIT 0,1");
 
 $map_tottime = GetMinutes($map_matches[gametime]);
 $map_lastmatch = mdate($map_last[time]);
@@ -52,10 +52,10 @@ echo'
 <br>';
 
 // Do graph stuff
-$bgwhere = "mapfile = '$realmap'";
+$bgwhere = "(mapfile = '$realmap' or mapfile = '$bugmap')";
 include("pages/graph_mbreakdown.php");
 
-$mcount = small_count("SELECT id FROM uts_match WHERE mapfile = '$realmap' GROUP BY id");
+$mcount = small_count("SELECT id FROM uts_match WHERE mapfile = '$realmap' OR mapfile = '$bugmap' GROUP BY id");
 
 $ecount = $mcount/25;
 $ecount2 = number_format($ecount, 0, '.', '');
@@ -77,20 +77,21 @@ $tfpage = $cpage+1;
 $tlpage = $lpage+1;
 
 $ppage = $cpage-1;
-$ppageurl = "<a class=\"pages\" href=\"./?p=servers&amp;page=$ppage\">[Previous]</a>";
+$ppageurl = "<a class=\"pages\" href=\"./?p=minfo&amp;map=".htmlentities($map)."&amp;page=$ppage\">[Previous]</a>";
 IF ($ppage < "0") { $ppageurl = "[Previous]"; }
 
 $npage = $cpage+1;
-$npageurl = "<a class=\"pages\" href=\"./?p=servers&amp;page=$npage\">[Next]</a>";
+$npageurl = "<a class=\"pages\" href=\"./?p=minfo&amp;map=".htmlentities($map)."&amp;page=$npage\">[Next]</a>";
 IF ($npage >= "$ecount") { $npageurl = "[Next]"; }
 
-$fpageurl = "<a class=\"pages\" href=\"./?p=servers&amp;page=$fpage\">[First]</a>";
+$fpageurl = "<a class=\"pages\" href=\"./?p=minfo&amp;map=".htmlentities($map)."&amp;page=$fpage\">[First]</a>";
 IF ($cpage == "0") { $fpageurl = "[First]"; }
 
-$lpageurl = "<a class=\"pages\" href=\"./?p=servers&amp;page=$lpage\">[Last]</a>";
+$lpageurl = "<a class=\"pages\" href=\"./?p=minfo&amp;map=".htmlentities($map)."&amp;page=$lpage\">[Last]</a>";
 IF ($cpage == "$lpage") { $lpageurl = "[Last]"; }
 
 echo'
+<div class="pages"><b>Page ['.$tfpage.'/'.$tlpage.'] Selection: '.$fpageurl.' / '.$ppageurl.' / '.$npageurl.' / '.$lpageurl.'</b></div>
 <table class="box" border="0" cellpadding="1" cellspacing="1">
   <tbody><tr>
     <td class="heading" colspan="5" align="center">Recent Matches</td>
@@ -103,7 +104,7 @@ echo'
   </tr>';
 
 $sql_maps = "SELECT m.id, m.time, g.name AS gamename, m.gametime
-FROM uts_match AS m, uts_games AS g WHERE m.mapfile = '$realmap' AND m.gid = g.id ORDER BY time DESC LIMIT $qpage,25";
+FROM uts_match AS m, uts_games AS g WHERE (m.mapfile = '$realmap' OR m.mapfile = '$bugmap') AND m.gid = g.id ORDER BY time DESC LIMIT $qpage,25";
 $q_maps = mysql_query($sql_maps) or die(mysql_error());
 while ($r_maps = mysql_fetch_array($q_maps)) {
 

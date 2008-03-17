@@ -13,7 +13,7 @@ if (isset($_COOKIE['uts_importkey'])) $adminkey = $_REQUEST['uts_importkey'];
 require ("includes/config.php");
 require ("includes/functions.php");
 
-$compatible_actor_versions = array('0.4.0', 'beta 4.0');
+$compatible_actor_versions = array('0.4.0', '0.4.1', '0.4.2', 'beta 4.0', 'beta 4.1', 'beta 4.2');
 
 
 // Get key from web browser
@@ -596,15 +596,15 @@ while (false !== ($filename = readdir($logdir)))
 				$pid = $r_radjust[pid];
 				$gid = $r_radjust[gid];
 				$rank = $r_radjust[rank];
-			
+
 				$sql_crank = small_query("SELECT id, rank, matches FROM uts_rank WHERE pid = $pid AND gid = $gid");
 				if (!$sql_crank) continue;
-				
+
 				$rid = $sql_crank[id];
 				$newrank = $sql_crank[rank]-$rank;
 				$oldrank = $sql_crank[rank];
 				$matchcount = $sql_crank[matches]-1;
-			
+
 				mysql_query("UPDATE uts_rank SET rank = $newrank, prevrank = $oldrank, matches = $matchcount WHERE id = $rid") or die(mysql_error());
 			}
 			mysql_query("DELETE FROM uts_rank WHERE matches = 0") or die(mysql_error());
@@ -622,22 +622,22 @@ while (false !== ($filename = readdir($logdir)))
 			include("import/import_weapons.php");
 			echo "Done\n";
 			if ($html) echo '</td></tr>';
-	
+
 			// Make our kills matrix stuff ...
 			if ($html) echo '<tr><td class="smheading" align="left" width="350">';
 			echo "Building kills matrix: ";
 			if ($html) echo '</td><td class="grey" align="left" width="200">';
 			include("import/import_killsmatrix.php");
 			echo "Done\n";
-	
-	
+
+
 			if ($html) echo '</td></tr><tr><td class="smheading" align="left" width="350">';
 			echo "Combining Duplicate Player Entries: ";
 			if ($html) echo '</td><td class="grey" align="left" width="200">';
-	
+
 			// Combine duplicate player entries ... very intensive :(
 			include("import/import_pcleanup.php");
-	
+
 			echo "Done\n";
 			if ($html) echo'</td></tr>';
 

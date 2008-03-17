@@ -26,8 +26,9 @@
 
 	// Get player's IP
 	$q_playerip = small_query("SELECT INET_ATON(col4) AS ip FROM uts_temp_$uid WHERE col1 = 'player' AND col2 = 'IP' and col3 = '$playerid' ORDER BY id ASC LIMIT 0,1");
-	$playerip = $q_playerip[ip];
-
+	$playerip = ($q_playerip) ? $q_playerip['ip'] : 0;
+	if (empty($playerip)) $playerip = 0;
+	
 	// Map the IP to a country
 	$q_playercountry = small_query("SELECT country FROM uts_ip2country WHERE $playerip BETWEEN ip_from AND ip_to;");
 	IF($q_playercountry) {
@@ -76,7 +77,7 @@
 	}
 
 	// Get ping information
-	$r_player9 = small_query("SELECT min(col4) AS lowping, max(col4) AS highping, avg(col4) AS avgping FROM uts_temp_$uid WHERE col1 = 'Player' AND col2 = 'Ping' AND col3 = $playerid");
+	$r_player9 = small_query("SELECT MIN(col4 * 1) AS lowping, MAX(col4 * 1) AS highping, AVG(col4 * 1) AS avgping FROM uts_temp_$uid WHERE col1 = 'Player' AND col2 = 'Ping' AND col3 = $playerid AND col4 > 0");
 	$lowping = $r_player9[lowping];
 	$highping = $r_player9[highping];
 	$avgping = $r_player9[avgping];
@@ -155,6 +156,10 @@
 										pu_belt = '$pu_belt',
 										pu_amp = '$pu_amp',
 										pu_invis = '$pu_invis',
+										
+										lowping = '$lowping',
+										highping = '$highping',
+										avgping = '$avgping',
 						
 										accuracy = '$r_acc', 
 										frags = '$r_frags', 

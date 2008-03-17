@@ -298,8 +298,9 @@ echo'<table border="0" cellpadding="1" cellspacing="1">
     <td class="smheading" align="center" width="50">N°</td>
     <td class="smheading" align="center" width="140">Match Type</td>
     <td class="smheading" align="center" width="80">Rank</td>
-    <td class="smheading" align="center" width="50">Matches</td>';
-	if ($pic_enable) echo '<td class="smheading" align="center" width="50">Pics</td>';
+    <td class="smheading" align="center" width="50">Matches</td>
+	 <td class="smheading" align="center" width="50">Explain</td>';
+	 if ($pic_enable and basename($_SERVER['PATH_TRANSLATED']) != 'admin.php') echo '<td class="smheading" align="center" width="50">Pics</td>';
 echo '</tr>';
 
 $sql_rank = "SELECT g.name AS gamename, r.rank, r.prevrank, r.matches, r.gid, r.pid FROM uts_rank AS r, uts_games AS g WHERE r.gid = g.id AND r.pid = '$pid';";
@@ -311,11 +312,34 @@ while ($r_rank = mysql_fetch_array($q_rank)) {
 		<td class="grey" align="center">'.$r_rank['gamename'].'</td>
 		<td class="grey" align="center">'.get_dp($r_rank['rank']) .' '. RankMovement($r_rank['rank'] - $r_rank['prevrank']) . '</td>
 		<td class="grey" align="center">'.$r_rank['matches'].'</td>';
-	if ($pic_enable) echo '<td class="grey" align="center"><a class="grey"  href="?p=pinfo&amp;pid='.$pid.'&amp;gid='.$r_rank['gid'].'&amp;pics=1">(Click)</a></td>';
+		echo '<td class="grey" align="center"><a class="grey" href="?p=pexplrank&amp;pid='.$pid.'&amp;gid='.$r_rank['gid'].'">(Click)</a></td>';
+	if ($pic_enable and basename($_SERVER['PATH_TRANSLATED']) != 'admin.php') echo '<td class="grey" align="center"><a class="grey"  href="?p=pinfo&amp;pid='.$pid.'&amp;gid='.$r_rank['gid'].'&amp;pics=1">(Click)</a></td>';
 	echo '</tr>';
 }
 
 echo '</tbody></table>';
+
+
+$r_pings = small_query("SELECT MIN(lowping * 1) AS lowping, AVG(avgping * 1) AS avgping, MAX(highping * 1) AS highping FROM uts_player WHERE pid = $pid and lowping > 0");
+if ($r_pings and $r_pings['lowping']) {
+echo '
+	<br>
+	<table border="0" cellpadding="0" cellspacing="2">
+	<tbody><tr>
+		<td class="heading" colspan="6" align="center">Pings</td>
+	</tr>
+	<tr>
+		<td class="smheading" align="center" width="80">Min</td>
+		<td class="smheading" align="center" width="80">Avg</td>
+		<td class="smheading" align="center" width="80">Max</td>
+	</tr>
+	<tr>
+		<td class="grey" align="center">'.ceil($r_pings['lowping']).'</td>
+		<td class="grey" align="center">'.ceil($r_pings['avgping']).'</td>
+		<td class="grey" align="center">'.ceil($r_pings['highping']).'</td>
+	</tr>
+	</tbody></table>';
+}
 
 
 

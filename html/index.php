@@ -23,6 +23,7 @@ switch ($_GET["p"])
 	case "players": players(); break;	// Players list
 	case "psearch": psearch(); break;	// Player search
 	case "pinfo": pinfo(); break;		// Player info
+	case "pexplrank": pexplrank(); break;		// Explain ranking
 
 	case "maps": maps(); break;			// Maps list
 	case "minfo": minfo(); break;		// Map info
@@ -103,6 +104,11 @@ function psearch()
 function pinfo()
 {
 	include("pages/players_info.php");
+}
+
+function pexplrank()
+{
+	include("pages/players_explain_ranking.php");
 }
 
 function pmatchs()

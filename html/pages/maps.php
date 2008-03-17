@@ -73,7 +73,7 @@ echo'
     <td class="smheading" align="center" width="100"><a class="smheading" href="./?p=maps&amp;filter=gametime&amp;sort='.InvertSort('gametime', $filter, $sort).'">Time</a>'.SortPic('gametime', $filter, $sort).'</td>
   </tr>';
 
-$sql_maps = "SELECT mapfile, COUNT(id) AS matchcount, AVG(frags) AS frags, AVG(t0score+t1score+t2score+t3score) AS matchscore, SUM(gametime) AS gametime
+$sql_maps = "SELECT IF(RIGHT(mapfile,4) LIKE '.unr', mapfile, CONCAT(mapfile, '.unr')) as mapfile, COUNT(id) AS matchcount, AVG(frags) AS frags, AVG(t0score+t1score+t2score+t3score) AS matchscore, SUM(gametime) AS gametime
 FROM uts_match GROUP BY mapfile ORDER BY $filter $sort LIMIT $qpage,25";
 $q_maps = mysql_query($sql_maps) or die(mysql_error());
 while ($r_maps = mysql_fetch_array($q_maps)) {

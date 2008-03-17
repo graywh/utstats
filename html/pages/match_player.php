@@ -198,4 +198,26 @@ IF ($sql_firstblood[firstblood] == $pid) {
 
 include('includes/weaponstats.php');
 weaponstats($mid, $pid);
+
+$r_pings = small_query("SELECT lowping, avgping, highping FROM uts_player WHERE pid = $pid  and matchid = $mid and lowping > 0");
+if ($r_pings and $r_pings['lowping']) {
+echo '
+	<br>
+	<table border="0" cellpadding="0" cellspacing="2">
+	<tbody><tr>
+		<td class="heading" colspan="6" align="center">Pings</td>
+	</tr>
+	<tr>
+		<td class="smheading" align="center" width="80">Min</td>
+		<td class="smheading" align="center" width="80">Avg</td>
+		<td class="smheading" align="center" width="80">Max</td>
+	</tr>
+	<tr>
+		<td class="grey" align="center">'.ceil($r_pings['lowping']).'</td>
+		<td class="grey" align="center">'.ceil($r_pings['avgping']).'</td>
+		<td class="grey" align="center">'.ceil($r_pings['highping']).'</td>
+	</tr>
+	</tbody></table>';
+}
+
 ?>

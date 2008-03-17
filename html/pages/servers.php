@@ -46,7 +46,7 @@ echo'
     <td class="smheading" align="center" width="50">Status</td>
     <td class="smheading" align="center" width="100">Matches</td>
     <td class="smheading" align="center">Frags</td>
-    <td class="smheading" align="center" width="100">Score</td>
+    <td class="smheading" align="center" width="100">TeamScore</td>
     <td class="smheading" align="center" width="100">Hours</td>
   </tr>';
 
