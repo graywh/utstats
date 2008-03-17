@@ -7,10 +7,10 @@ while ($r_rgame = mysql_fetch_array($q_rgame)) {
 	  <table class="box" border="0" cellpadding="1" cellspacing="1">
 	  <tbody>
 	  <tr>
-		<td class="heading" colspan="4" align="center">Top 10 '.$r_rgame['name'].' Players</td>
+		<td class="heading" colspan="4" align="center">Top 10 '.$r_rgame[name].' Players</td>
 	  </tr>
 	  <tr>
-		<td class="smheading" align="center" width="75">N°</td>
+		<td class="smheading" align="center" width="75">N</td>
 		<td class="smheading" align="center" width="150">Player Name</td>
 		<td class="smheading" align="center" width="75">Rank</td>
 		<td class="smheadingx" align="center" width="75">Matches</td>
@@ -19,7 +19,7 @@ while ($r_rgame = mysql_fetch_array($q_rgame)) {
 
 		$ranking = 0;
 
-	  	$sql_rplayer = "SELECT pi.id AS pid, pi.name, pi.country, r.rank, r.prevrank, r.matches FROM uts_rank AS r, uts_pinfo AS pi WHERE r.pid = pi.id AND r.gid =  '$r_rgame[gid]' AND pi.banned <> 'Y' ORDER BY r.rank DESC LIMIT 0,10";
+	  	$sql_rplayer = "SELECT pi.id AS pid, pi.name, pi.country, r.rank, r.prevrank, r.matches FROM uts_rank AS r, uts_pinfo AS pi WHERE r.pid = pi.id AND r.gid = '$r_rgame[gid]' AND pi.banned <> 'Y' ORDER BY r.rank DESC LIMIT 0,10";
 		$q_rplayer = mysql_query($sql_rplayer) or die(mysql_error());
 		while ($r_rplayer = mysql_fetch_array($q_rplayer)) {
 
@@ -29,7 +29,7 @@ while ($r_rgame = mysql_fetch_array($q_rgame)) {
 		  echo'
 		  <tr>
 			<td class="grey" align="center">'.$ranking.'</td>
-			<td nowrap class="dark" align="left"><a class="darkhuman" href="./?p=pinfo&amp;pid='.$r_rplayer[pid].'">'.FlagImage($r_rplayer[country]).' '.htmlspecialchars($r_rplayer[name]) .' '. RankMovement($r_rplayer['rank'] - $r_rplayer['prevrank']).'</a></td>
+			<td nowrap class="dark" align="left"><a class="darkhuman" href="./?p=pinfo&amp;pid='.$r_rplayer[pid].'">'.FlagImage($r_rplayer[country]).' '.htmlspecialchars($r_rplayer[name]) .' '. RankMovement($r_rplayer[rank] - $r_rplayer[prevrank]).'</a></td>
 			<td class="dark" align="center">'.get_dp($r_rplayer[rank]).'</td>
 			<td class="grey" align="center">'.$r_rplayer[matches].'</td>
 		  </tr>';

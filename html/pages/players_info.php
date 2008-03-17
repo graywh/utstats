@@ -76,7 +76,7 @@ if (isset($_GET['pics'])) {
 echo'
 <table class="box" border="0" cellpadding="1" cellspacing="2" width="710">
   <tbody><tr>
-    <td class="heading" colspan="12" align="center">Career Summary for '.FlagImage($r_info['country'], false).' '.htmlentities($playername).' ';
+    <td class="heading" colspan="13" align="center">Career Summary for '.FlagImage($r_info['country'], false).' '.htmlentities($playername).' ';
 
 if (PlayerOnWatchlist($pid)) {
  	echo '<a href="?p=pinfo&amp;pid='.$pid.'&amp;togglewatch=1&amp;noheader=1"><img src="images/unwatch.png" width="17" height="11" border="0" alt="" title="You are watching this player. Click to remove from your watchlist."></a>';
@@ -96,6 +96,7 @@ echo '
     <td class="smheading" align="center" '.OverlibPrintHint('S').'>S</td>
     <td class="smheading" align="center" '.OverlibPrintHint('TK').'>TK</td>
     <td class="smheading" align="center" '.OverlibPrintHint('EFF').'>Eff.</td>
+	<td class="smheading" align="center" '.OverlibPrintHint('FPH').'>FPH</td>
     <td class="smheading" align="center" '.OverlibPrintHint('ACC').'>Acc.</td>
     <td class="smheading" align="center" '.OverlibPrintHint('TTL').'>Avg TTL</td>
     <td class="smheading" align="center">Matches</td>
@@ -103,17 +104,17 @@ echo '
   </tr>';
 
 $sql_plist = "SELECT g.name AS gamename, SUM(p.gamescore) AS gamescore, SUM(p.frags) AS frags, SUM(p.kills) AS kills, SUM(p.deaths) AS deaths,
-SUM(p.suicides) AS suicides, SUM(p.teamkills) AS teamkills, SUM(kills+deaths+suicides+teamkills) AS sumeff, AVG(p.accuracy) AS accuracy, AVG(p.ttl) AS ttl,
-COUNT(p.id) AS games, SUM(p.gametime) as gametime
-FROM uts_player AS p, uts_games AS g WHERE p.gid = g.id AND p.pid = '$pid' GROUP BY p.gid";
+SUM(p.suicides) AS suicides, SUM(p.teamkills) AS teamkills, SUM(p.kills+p.deaths+p.suicides+p.teamkills) AS sumeff, (100 * SUM(ws.hits)/SUM(ws.shots)) AS accuracy, COUNT(p.id) AS games, SUM(p.gametime) as gametime
+FROM uts_player AS p, uts_games AS g, uts_weaponstats as ws WHERE p.gid = g.id AND p.pid = '$pid' AND ws.pid = '$pid' and ws.weapon = '0' AND ws.matchid = p.matchid GROUP BY p.gid";
 
 $q_plist = mysql_query($sql_plist) or die(mysql_error());
 while ($r_plist = mysql_fetch_array($q_plist)) {
 
 	  $gametime = sec2hour($r_plist[gametime]);
-	  $eff = get_dp($r_plist[kills]/$r_plist[sumeff]*100);
+	  $eff = get_dp($r_plist[kills] / $r_plist[sumeff] * 100);
 	  $acc = get_dp($r_plist[accuracy]);
-	  $ttl = GetMinutes($r_plist[ttl]);
+	  $fph = get_dp($r_plist[frags] / $r_plist[gametime] * 3600);
+	  $ttl = GetMinutes($r_plist[gametime] / ($r_plist[deaths] + $r_plist[suicides] + $r_plist[games]));
 
 	  echo'<tr>
 		<td class="dark" align="center">'.$r_plist[gamename].'</td>
@@ -124,6 +125,7 @@ while ($r_plist = mysql_fetch_array($q_plist)) {
 		<td class="grey" align="center">'.$r_plist[suicides].'</td>
 		<td class="grey" align="center">'.$r_plist[teamkills].'</td>
 		<td class="grey" align="center">'.$eff.'</td>
+		<td class="grey" align="center">'.$fph.'</td>
 		<td class="grey" align="center">'.$acc.'</td>
 		<td class="grey" align="center">'.$ttl.'</td>
 		<td class="grey" align="center">'.$r_plist[games].'</td>
@@ -131,15 +133,14 @@ while ($r_plist = mysql_fetch_array($q_plist)) {
 	  </tr>';
 }
 
-$r_sumplist = small_query("SELECT SUM(gamescore) AS gamescore, SUM(frags) AS frags, SUM(kills) AS kills, SUM(deaths) AS deaths,
-SUM(suicides) AS suicides, SUM(teamkills) AS teamkills, SUM(kills+deaths+suicides+teamkills) AS sumeff,
-AVG(accuracy) AS accuracy, AVG(ttl) AS ttl, COUNT(id) AS games, SUM(gametime) as gametime
-FROM uts_player WHERE pid = '$pid'");
+$r_sumplist = small_query("SELECT SUM(p.gamescore) AS gamescore, SUM(p.frags) AS frags, SUM(p.kills) AS kills, SUM(p.deaths) AS deaths, SUM(p.suicides) AS suicides, SUM(p.teamkills) AS teamkills, SUM(p.kills+p.deaths+p.suicides+p.teamkills) AS sumeff, COUNT(p.id) AS games, SUM(p.gametime) as gametime, (100 * SUM(ws.hits)/SUM(ws.shots)) as accuracy
+FROM uts_player AS p, uts_weaponstats as ws WHERE p.pid = '$pid' AND ws.pid = '$pid' AND ws.matchid = 0 AND ws.weapon = 0");
 
 $gametime = sec2hour($r_sumplist[gametime]);
 $eff = get_dp($r_sumplist[kills]/$r_sumplist[sumeff]*100);
 $acc = get_dp($r_sumplist[accuracy]);
-$ttl = GetMinutes($r_sumplist[ttl]);
+$fph = get_dp($r_sumplist[frags]/$r_sumplist[gametime]*3600);
+$ttl = GetMinutes($r_sumplist[gametime] / ($r_sumplist[deaths] + $r_sumplist[suicides] + $r_sumplist[games]));
 
   echo'
   <tr>
@@ -151,6 +152,7 @@ $ttl = GetMinutes($r_sumplist[ttl]);
 	<td class="darkgrey" align="center">'.$r_sumplist[suicides].'</td>
 	<td class="darkgrey" align="center">'.$r_sumplist[teamkills].'</td>
 	<td class="darkgrey" align="center">'.$eff.'</td>
+	<td class="darkgrey" align="center">'.$fph.'</td>
 	<td class="darkgrey" align="center">'.$acc.'</td>
 	<td class="darkgrey" align="center">'.$ttl.'</td>
 	<td class="darkgrey" align="center">'.$r_sumplist[games].'</td>
@@ -179,14 +181,14 @@ $ttl = GetMinutes($r_sumplist[ttl]);
     <td class="dark" align="center">Flag Returns</td>
   </tr>';
 
- $q_assgids = mysql_query("SELECT id FROM uts_games WHERE gamename LIKE '%Assault%';") or die(mysql_error());
- $assgids = array();
- while ($r_assgids = mysql_fetch_array($q_assgids)) {
- 	$assgids[] = $r_assgids['id'];
- }
- $assquery = (count($assgids) > 0) ? 'SUM(IF (gid IN ('. implode(',', $assgids) .'), ass_obj, 0)) AS ass_obj' : '0 AS ass_obj';
+ #$q_assgids = mysql_query("SELECT id FROM uts_games WHERE gamename LIKE '%Assault%';") or die(mysql_error());
+ #$assgids = array();
+ #while ($r_assgids = mysql_fetch_array($q_assgids)) {
+ #	$assgids[] = $r_assgids['id'];
+ #}
+ #$assquery = (count($assgids) > 0) ? 'SUM(IF (gid IN ('. implode(',', $assgids) .'), ass_obj, 0)) AS ass_obj' : '0 AS ass_obj';
 
- $sql_cdatot = zero_out(small_query("SELECT SUM(dom_cp) AS dom_cp, $assquery, SUM(flag_taken) AS flag_taken,
+ $sql_cdatot = zero_out(small_query("SELECT SUM(dom_cp) AS dom_cp, SUM(ass_obj) AS ass_obj, SUM(flag_taken) AS flag_taken,
  SUM(flag_pickedup) AS flag_pickedup, SUM(flag_dropped) AS flag_dropped, SUM(flag_assist) AS flag_assist, SUM(flag_cover) AS flag_cover,
  SUM(flag_seal) AS flag_seal, SUM(flag_capture) AS flag_capture, SUM(flag_kill)as flag_kill,
  SUM(flag_return) AS flag_return FROM uts_player WHERE pid = '$pid'"));
@@ -209,10 +211,11 @@ $ttl = GetMinutes($r_sumplist[ttl]);
 <br>
 <table border="0" cellpadding="0" cellspacing="2" width="400">
   <tbody><tr>
-    <td class="heading" colspan="10" align="center">Special Events</td>
+    <td class="heading" colspan="11" align="center">Special Events</td>
   </tr>
   <tr>
     <td class="smheading" align="center" rowspan="2" width="40">First Blood</td>
+	<td class="smheading" align="center" rowspan="2" width="40">Head Shots</td>
     <td class="smheading" align="center" colspan="4" width="160" '.OverlibPrintHint('Multis').'>Multis</td>
     <td class="smheading" align="center" colspan="5" width="200" '.OverlibPrintHint('Sprees').'>Sprees</td>
   </tr>
@@ -229,15 +232,14 @@ $ttl = GetMinutes($r_sumplist[ttl]);
   </tr>';
 
 $sql_firstblood = zero_out(small_query("SELECT COUNT(id) AS fbcount FROM uts_match WHERE firstblood = '$pid'"));
-$sql_multis = zero_out(small_query("SELECT SUM(spree_double) AS spree_double, SUM(spree_multi) AS spree_multi,
-SUM(spree_ultra) AS spree_ultra, SUM(spree_monster)  AS spree_monster,
-SUM(spree_kill) AS spree_kill, SUM(spree_rampage) AS spree_rampage, SUM(spree_dom) AS spree_dom,
-SUM(spree_uns) AS spree_uns, SUM(spree_god) AS spree_god
+$sql_multis = zero_out(small_query("SELECT SUM(spree_double) AS spree_double, SUM(spree_multi) AS spree_multi, SUM(spree_ultra) AS spree_ultra, SUM(spree_monster)  AS spree_monster, SUM(spree_kill) AS spree_kill, SUM(spree_rampage) AS spree_rampage, SUM(spree_dom) AS spree_dom,
+SUM(spree_uns) AS spree_uns, SUM(spree_god) AS spree_god, SUM(headshots) AS headshots
 FROM uts_player WHERE pid = '$pid'"));
 
   echo'
   <tr>
 	<td class="grey" align="center">'.$sql_firstblood[fbcount].'</td>
+	<td class="grey" align="center">'.$sql_multis[headshots].'</td>
 	<td class="grey" align="center">'.$sql_multis[spree_double].'</td>
 	<td class="grey" align="center">'.$sql_multis[spree_multi].'</td>
 	<td class="grey" align="center">'.$sql_multis[spree_ultra].'</td>
@@ -252,7 +254,7 @@ FROM uts_player WHERE pid = '$pid'"));
 <br>
 <table border="0" cellpadding="0" cellspacing="2" width="480">
   <tbody><tr>
-    <td class="heading" colspan="6" align="center">Pickups Summary</td>
+    <td class="heading" colspan="7" align="center">Pickups Summary</td>
   </tr>
   <tr>
     <td class="smheading" align="center" width="80">Pads</td>
@@ -261,10 +263,11 @@ FROM uts_player WHERE pid = '$pid'"));
     <td class="smheading" align="center" width="80">Invisibility</td>
     <td class="smheading" align="center" width="80">Shield Belt</td>
     <td class="smheading" align="center" width="80">Damage Amp</td>
+	<td class="smheading" align="center" width="80">AntiGrav Boots</td>
   </tr>';
 
 $r_pickups = zero_out(small_query("SELECT SUM(pu_pads) AS pu_pads, SUM(pu_armour) AS pu_armour, SUM(pu_keg) AS pu_keg,
-SUM(pu_invis) AS pu_invis, SUM(pu_belt) AS pu_belt, SUM(pu_amp) AS pu_amp
+SUM(pu_invis) AS pu_invis, SUM(pu_belt) AS pu_belt, SUM(pu_amp) AS pu_amp, SUM(pu_boots) AS pu_boots
 FROM uts_player WHERE pid = '$pid'"));
 
   echo'
@@ -275,6 +278,7 @@ FROM uts_player WHERE pid = '$pid'"));
 	<td class="grey" align="center">'.$r_pickups[pu_invis].'</td>
 	<td class="grey" align="center">'.$r_pickups[pu_belt].'</td>
 	<td class="grey" align="center">'.$r_pickups[pu_amp].'</td>
+	<td class="grey" align="center">'.$r_pickups[pu_boots].'</td>
   </tr>
   </tbody></table>
 <br>';
@@ -295,7 +299,7 @@ echo'<table border="0" cellpadding="1" cellspacing="1">
     <td class="heading" colspan="6" align="center">Ranking</td>
   </tr>
   <tr>
-    <td class="smheading" align="center" width="50">N°</td>
+    <td class="smheading" align="center" width="50">N</td>
     <td class="smheading" align="center" width="140">Match Type</td>
     <td class="smheading" align="center" width="80">Rank</td>
     <td class="smheading" align="center" width="50">Matches</td>

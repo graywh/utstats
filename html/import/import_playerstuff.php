@@ -42,7 +42,7 @@
 	}
 
 
-	// Get Sprees
+	// Get Sprees and Head Shots
 	$q_spree_dbl = small_count("SELECT id FROM uts_temp_$uid WHERE col1 = 'spree' AND col2 = 'spree_dbl' AND col3 = '$playerid'");
 	$q_spree_mult = small_count("SELECT id FROM uts_temp_$uid WHERE col1 = 'spree' AND col2 = 'spree_mult' AND col3 = '$playerid'");
 	$q_spree_ult = small_count("SELECT id FROM uts_temp_$uid WHERE col1 = 'spree' AND col2 = 'spree_ult' AND col3 = '$playerid'");
@@ -53,6 +53,8 @@
 	$q_spree_dom = small_count("SELECT id FROM uts_temp_$uid WHERE col1 = 'spree' AND col2 = 'spree_dom' AND col3 = '$playerid'");
 	$q_spree_uns = small_count("SELECT id FROM uts_temp_$uid WHERE col1 = 'spree' AND col2 = 'spree_uns' AND col3 = '$playerid'");
 	$q_spree_god = small_count("SELECT id FROM uts_temp_$uid WHERE col1 = 'spree' AND col2 = 'spree_god' AND col3 = '$playerid'");
+	
+	$q_headshots = small_count("SELECT id FROM uts_temp_$uid WHERE col1 = 'headshot' AND col2 = '$playerid'");
 
 
 	// Get Count of Pickups
@@ -65,6 +67,7 @@
 	$pu_belt = 0;
 	$pu_amp = 0;
 	$pu_invis = 0;
+	$pu_boots = 0;
 
 	while ($r_player7 = mysql_fetch_array($q_player7)) {
 		// Cycle through pickups and see what the player got
@@ -74,6 +77,7 @@
 		IF ($r_player7[col2] == "ShieldBelt") { $pu_belt = $r_player7[pu_count]; }
 		IF ($r_player7[col2] == "Damage Amplifier") { $pu_amp = $r_player7[pu_count]; }
 		IF ($r_player7[col2] == "Invisibility") { $pu_invis = $r_player7[pu_count]; }
+		IF ($r_player7[col2] == "AntiGrav Boots") { $pu_boots = $r_player7[pu_count]; }
 	}
 
 	// Get ping information
@@ -129,48 +133,49 @@
 
 	// Generate player record
 	$sql_playerid = "	INSERT 
-							INTO		uts_player 
+							INTO	uts_player 
 							SET		matchid = '$matchid',
-										playerid = '$playerid',
-										pid = '$pid',
-										team = '$playerteam',
-										gid = '$gid',
-										insta = '$gameinsta',
-										country = '$playercountry',
-										ip = '$playerip',
-										
-										
-										spree_double = '$q_spree_dbl',
-										spree_multi = '$q_spree_mult',
-										spree_ultra = '$q_spree_ult',
-										spree_monster = '$q_spree_mon',
-										spree_kill = '$q_spree_kill',
-										spree_rampage = '$q_spree_rampage',
-										spree_dom = '$q_spree_dom',
-										spree_uns = '$q_spree_uns',
-										spree_god = '$q_spree_god',
-											
-										pu_pads = '$pu_pads',
-										pu_armour = '$pu_armour',
-										pu_keg = '$pu_keg',
-										pu_belt = '$pu_belt',
-										pu_amp = '$pu_amp',
-										pu_invis = '$pu_invis',
-										
-										lowping = '$lowping',
-										highping = '$highping',
-										avgping = '$avgping',
+									playerid = '$playerid',
+									pid = '$pid',
+									team = '$playerteam',
+									gid = '$gid',
+									insta = '$gameinsta',
+									country = '$playercountry',
+									ip = '$playerip',
+									
+									headshots = '$q_headshots',
+									spree_double = '$q_spree_dbl',
+									spree_multi = '$q_spree_mult',
+									spree_ultra = '$q_spree_ult',
+									spree_monster = '$q_spree_mon',
+									spree_kill = '$q_spree_kill',
+									spree_rampage = '$q_spree_rampage',
+									spree_dom = '$q_spree_dom',
+									spree_uns = '$q_spree_uns',
+									spree_god = '$q_spree_god',
+									
+									pu_pads = '$pu_pads',
+									pu_armour = '$pu_armour',
+									pu_keg = '$pu_keg',
+									pu_belt = '$pu_belt',
+									pu_amp = '$pu_amp',
+									pu_invis = '$pu_invis',
+									pu_boots = '$pu_boots',
+									
+									lowping = '$lowping',
+									highping = '$highping',
+									avgping = '$avgping',
 						
-										accuracy = '$r_acc', 
-										frags = '$r_frags', 
-										deaths = '$r_deaths', 
-										kills = '$r_kills', 
-										suicides = '$r_suicides',
-										teamkills = '$r_teamkills', 
-										eff = '$r_efficiency', 
-										gametime = '$r_tos', 
-										ttl = '$r_ttl', 
-										gamescore= '$r_score'"; 
+									accuracy = '$r_acc', 
+									frags = '$r_frags', 
+									deaths = '$r_deaths', 
+									kills = '$r_kills', 
+									suicides = '$r_suicides',
+									teamkills = '$r_teamkills', 
+									eff = '$r_efficiency', 
+									gametime = '$r_tos', 
+									ttl = '$r_ttl', 
+									gamescore= '$r_score'"; 
 	
 	$q_playerid = mysql_query($sql_playerid) or die(mysql_error());
 	$playerecordid = mysql_insert_id();

@@ -4,7 +4,8 @@
 	$q_domplayer = mysql_query($sql_domplayer) or die(mysql_error());
 	$r_domplayer = mysql_fetch_array($q_domplayer);
 	$domplayer = $r_domplayer[col3];
-	$updatedomplayer = "UPDATE uts_player SET ass_obj = $domplayer WHERE id = $playerecordid";
+	if ($domplayer == null) $domplayer = 0;
+	$updatedomplayer = "UPDATE uts_player SET dom_pts = $domplayer WHERE id = $playerecordid";
 	mysql_query($updatedomplayer) or die(mysql_error());
 
 // Who did the control points

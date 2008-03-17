@@ -7,10 +7,11 @@ weaponstats($mid, NULL);
 echo'<br>
 <table border="0" cellpadding="0" cellspacing="2" width="550">
   <tbody><tr>
-	<td class="heading" colspan="10" align="center">Special Events</td>
+	<td class="heading" colspan="11" align="center">Special Events</td>
   </tr>
   <tr>
 	<td class="smheading" align="center" rowspan="2" width="">Player</td>
+	<td class="smheading" align="center" rowspan="2" width="">Head Shots</td>
 	<td class="smheading" align="center" colspan="4" width="160" '.OverlibPrintHint('Multis').'>Multis</td>
 	<td class="smheading" align="center" colspan="5" width="200" '.OverlibPrintHint('Sprees').'>Sprees</td>
   </tr>
@@ -29,7 +30,7 @@ echo'<br>
 $sql_multis = "SELECT p.pid, pi.name, p.country, SUM(spree_double) AS spree_double, SUM(spree_multi) AS spree_multi,
 SUM(spree_ultra) AS spree_ultra, SUM(spree_monster)  AS spree_monster,
 SUM(spree_kill) AS spree_kill, SUM(spree_rampage) AS spree_rampage, SUM(spree_dom) AS spree_dom,
-SUM(spree_uns) AS spree_uns, SUM(spree_god) AS spree_god
+SUM(spree_uns) AS spree_uns, SUM(spree_god) AS spree_god, SUM(headshots) AS headshots
 FROM uts_player as p, uts_pinfo AS pi  WHERE p.pid = pi.id  AND pi.banned <> 'Y' AND matchid = $mid GROUP BY pid ORDER BY name ASC";
 $q_multis = mysql_query($sql_multis) or die(mysql_error());
 $i = 0;
@@ -42,6 +43,7 @@ while ($r_multis = zero_out(mysql_fetch_array($q_multis))) {
   echo'
   <tr>
 	<td nowrap class="darkhuman" align="left"><a class="darkhuman" href="./?p=matchp&amp;mid='.$mid.'&amp;pid='.$r_multis['pid'].'">'.FormatPlayerName($r_multis[country], $r_multis[pid], $r_pname, $gid, $gamename).'</a></td>
+	<td class="'.$class.'" align="center">'.$r_multis[headshots].'</td>
 	<td class="'.$class.'" align="center">'.$r_multis[spree_double].'</td>
 	<td class="'.$class.'" align="center">'.$r_multis[spree_multi].'</td>
 	<td class="'.$class.'" align="center">'.$r_multis[spree_ultra].'</td>
@@ -59,7 +61,7 @@ if (strpos($gamename, '(insta)') === false) {
 	  echo'</tbody></table><br>
 	<table border="0" cellpadding="0" cellspacing="2" width="720">
 	<tbody><tr>
-		<td class="heading" colspan="7" align="center">Pickups Summary</td>
+		<td class="heading" colspan="8" align="center">Pickups Summary</td>
 	</tr>
 	<tr>
 		<td class="smheading" align="center">Player</td>
@@ -69,10 +71,11 @@ if (strpos($gamename, '(insta)') === false) {
 		<td class="smheading" align="center" width="80">Invisibility</td>
 		<td class="smheading" align="center" width="80">Shield Belt</td>
 		<td class="smheading" align="center" width="80">Damage Amp</td>
+		<td class="smheading" align="center" width="80">AntiGrav Boots</td?
 	</tr>';
 
 	$sql_pickups = "SELECT p.pid, pi.name, p.country, SUM(p.pu_pads) AS pu_pads, SUM(p.pu_armour) AS pu_armour, SUM(p.pu_keg) AS pu_keg,
-	SUM(p.pu_invis) AS pu_invis, SUM(p.pu_belt) AS pu_belt, SUM(p.pu_amp) AS pu_amp
+	SUM(p.pu_invis) AS pu_invis, SUM(p.pu_belt) AS pu_belt, SUM(p.pu_amp) AS pu_amp, SUM(p.pu_boots) AS pu_boots
 	FROM uts_player as p, uts_pinfo AS pi  WHERE p.pid = pi.id AND pi.banned <> 'Y' AND matchid = $mid GROUP BY pid ORDER BY name ASC";
 	$q_pickups = mysql_query($sql_pickups) or die(mysql_error());
 	$i = 0;
@@ -91,6 +94,7 @@ if (strpos($gamename, '(insta)') === false) {
 			<td class="'.$class.'" align="center">'.$r_pickups[pu_invis].'</td>
 			<td class="'.$class.'" align="center">'.$r_pickups[pu_belt].'</td>
 			<td class="'.$class.'" align="center">'.$r_pickups[pu_amp].'</td>
+			<td class="'.$class.'" align="center">'.$r_pickups[pu_boots].'</td>
 		</tr>';
 	}
 }

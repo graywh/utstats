@@ -62,9 +62,9 @@ if (file_exists($mappic)) {
   echo'
   <tr>
     <td class="dark" align="center" width="110">Match Date</td>
-    <td class="grey" align="center">'.$matchdate.'</td>
+    <td class="grey" align="center" width="250">'.$matchdate.'</td>
     <td class="dark" align="center" width="110">Server</td>
-    <td class="grey" align="center" width="146"><a class="grey" href="./?p=sinfo&amp;serverip='.$matchinfo[serverip].'">'.$matchinfo[servername].'</a></td>
+    <td class="grey" align="center" width="250"><a class="grey" href="./?p=sinfo&amp;serverip='.$matchinfo[serverip].'">'.$matchinfo[servername].'</a></td>
   </tr>
   <tr>
     <td class="dark" align="center">Match Type</td>
@@ -75,7 +75,7 @@ if (file_exists($mappic)) {
   <tr>
     <td class="dark" align="center">Server Info</td>
     <td class="grey" align="center">'.$matchinfo[serverinfo].'</td>
-    <td class="dark" align="center" rowspan="4" colspan="2"><img border="0" alt="'.$mapname.'" title="'.$mapname.'" src="'.$mappic.'"></td>
+    <td class="dark" align="center" rowspan="3" colspan="2"><img border="0" alt="'.$mapname.'" title="'.$mapname.'" src="'.$mappic.'"></td>
   </tr>
   <tr>
     <td class="dark" align="center">Game Info</td>

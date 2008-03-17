@@ -51,7 +51,7 @@ $teamscore = small_query("SELECT SUM(t0score + t1score + t2score + t3score) AS r
 $playerscore = small_query("SELECT SUM(gamescore) AS result FROM uts_player WHERE matchid = $mid");
 $fragcount = small_query("SELECT SUM(frags) AS result FROM uts_match WHERE id = $mid");
 $killcount = small_query("SELECT SUM(kills) AS result FROM uts_match WHERE id = $mid");
-$deathcount = small_query("SELECT SUM(deaths) AS result FROM uts_player WHERE id = $mid");
+$deathcount = small_query("SELECT SUM(deaths) AS result FROM uts_match WHERE id = $mid");
 $suicidecount = small_query("SELECT SUM(suicides) AS result FROM uts_match WHERE id = $mid");
 
 echo'
@@ -100,7 +100,7 @@ if (file_exists($mappic)) {
   <tr>
     <td class="dark" align="center">Server Info</td>
     <td class="grey" align="center">'.$matchinfo[serverinfo].'</td>
-    <td class="dark" align="center" rowspan="4" colspan="2"><img border="0" alt="'.$mapname.'" title="'.$mapname.'" src="'.$mappic.'"></td>
+    <td class="dark" align="center" rowspan="3" colspan="2"><img border="0" alt="'.$mapname.'" title="'.$mapname.'" src="'.$mappic.'"></td>
   </tr>
   <tr>
     <td class="dark" align="center">Game Info</td>
@@ -114,7 +114,7 @@ if (file_exists($mappic)) {
 <br>
 <table border="0" cellpadding="0" cellspacing="2" width="400">
   <tbody><tr>
-    <td class="heading" colspan="8" align="center">Game Summary</td>
+    <td class="heading" colspan="9" align="center">Game Summary</td>
   </tr>
   <tr>
     <td class="smheading" align="center" width="40">Frags</td>
@@ -122,14 +122,17 @@ if (file_exists($mappic)) {
     <td class="smheading" align="center" width="50">Deaths</td>
     <td class="smheading" align="center" width="60">Suicides</td>
     <td class="smheading" align="center" width="70">Efficiency</td>
+	<td class="smheading" align="center" width="40">FPH</td>
     <td class="smheading" align="center" width="50">Accuracy</td>
     <td class="smheading" align="center" width="50">Avg TTL</td>
     <td class="smheading" align="center" width="50">Time</td>
   </tr>';
 
-$r_gsumm = zero_out(small_query("SELECT gamescore, frags, SUM(frags+suicides) AS kills, deaths, suicides, teamkills, eff, accuracy, ttl, gametime, spree_kill, spree_rampage, spree_dom, spree_uns, spree_god
+$r_gsumm = zero_out(small_query("SELECT gamescore, frags, SUM(frags+suicides) AS kills, deaths, suicides, teamkills, eff, accuracy, gametime, spree_kill, spree_rampage, spree_dom, spree_uns, spree_god
 FROM uts_player WHERE matchid = $mid AND pid = '$pid'
 GROUP BY pid"));
+
+$ttl = GetMinutes($r_gsumm[gametime] / ($r_gsumm[deaths] + $r_gsumm[suicides] + 1));
 
   echo'
   <tr>
@@ -138,8 +141,9 @@ GROUP BY pid"));
 	<td class="grey" align="center">'.$r_gsumm[deaths].'</td>
 	<td class="grey" align="center">'.$r_gsumm[suicides].'</td>
 	<td class="grey" align="center">'.$r_gsumm[eff].'</td>
+	<td class="grey" align="center">'.get_dp($r_gsumm[frags]/$r_gsumm[gametime]*3600).'</td>
 	<td class="grey" align="center">'.$r_gsumm[accuracy].'</td>
-	<td class="grey" align="center">'.$r_gsumm[ttl].'</td>
+	<td class="grey" align="center">'.$ttl.'</td>
 	<td class="grey" align="center">'.GetMinutes($r_gsumm[gametime]).'</td>
   </tr>';
 
@@ -148,10 +152,11 @@ echo'
 <br>
 <table border="0" cellpadding="0" cellspacing="2" width="400">
   <tbody><tr>
-    <td class="heading" colspan="10" align="center">Special Events</td>
+    <td class="heading" colspan="11" align="center">Special Events</td>
   </tr>
   <tr>
     <td class="smheading" align="center" rowspan="2" width="40">First Blood</td>
+	<td class="smheading" align="center" rowspan="2" width="40">Head Shots</td>
     <td class="smheading" align="center" colspan="4" width="160" '.OverlibPrintHint('Multis').'>Multis</td>
     <td class="smheading" align="center" colspan="5" width="200" '.OverlibPrintHint('Sprees').'>Sprees</td>
   </tr>
@@ -167,7 +172,7 @@ echo'
     <td class="smheading" align="center" width="40" '.OverlibPrintHint('GL').'>God</td>
   </tr>';
 
-$r_gsumm = zero_out(small_query("SELECT spree_double, spree_multi, spree_ultra, spree_monster, spree_kill, spree_rampage, spree_dom, spree_uns, spree_god
+$r_gsumm = zero_out(small_query("SELECT spree_double, spree_multi, spree_ultra, spree_monster, spree_kill, spree_rampage, spree_dom, spree_uns, spree_god, headshots
 FROM uts_player WHERE matchid = $mid AND pid = '$pid'
 GROUP BY pid"));
 
@@ -183,6 +188,7 @@ IF ($sql_firstblood[firstblood] == $pid) {
   echo'
   <tr>
 	<td class="grey" align="center">'.$firstblood.'</td>
+	<td class="grey" align="center">'.$r_gsumm[headshots].'</td>
 	<td class="grey" align="center">'.$r_gsumm[spree_double].'</td>
 	<td class="grey" align="center">'.$r_gsumm[spree_multi].'</td>
 	<td class="grey" align="center">'.$r_gsumm[spree_ultra].'</td>

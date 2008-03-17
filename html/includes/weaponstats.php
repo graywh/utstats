@@ -2,83 +2,83 @@
 function weaponstats($_mid, $_pid, $title = 'Weapons Summary') {
 	global $gamename, $gid;
 
-	$sql_weapons = "SELECT	w.matchid,
-									w.pid AS playerid,
-									w.weapon,
-									w.kills,
-									w.shots,
-									w.hits,
-									w.damage,
-									w.acc,
+	$sql_weapons = "SELECT	ws.matchid,
+									ws.pid AS playerid,
+									ws.weapon,
+									ws.kills,
+									ws.shots,
+									ws.hits,
+									ws.damage,
+									ws.acc,
 									pi.name AS playername,
 									pi.country AS country,
 									pi.banned AS banned,
-									wn.id AS weaponid,
-									wn.name AS weaponname,
-									wn.image AS weaponimg,
-									wn.sequence AS sequence
-						FROM		uts_weaponstats AS w,
-									uts_weapons AS wn
+									w.id AS weaponid,
+									w.name AS weaponname,
+									w.image AS weaponimg,
+									w.sequence AS sequence
+						FROM		uts_weapons AS w,
+									uts_weaponstats AS ws
 						LEFT JOIN uts_pinfo AS pi
-							ON		w.pid = pi.id
-						WHERE		w.matchid = '$_mid'
-							AND	w.pid = '$_pid'
-							AND	(wn.id = w.weapon)
-							AND wn.hide <> 'Y'";
+							ON		ws.pid = pi.id
+						WHERE		ws.matchid = '$_mid'
+							AND	ws.pid = '$_pid'
+							AND	w.id = ws.weapon
+							AND w.hide <> 'Y'";
 
 
 	if ($_pid == 0 and $_mid != 0) {
-		$sql_weapons = "SELECT	w.matchid,
-										w.pid AS playerid,
-										w.weapon,
-										SUM(w.kills) AS kills,
-										SUM(w.shots) AS shots,
-										SUM(w.hits)  AS hits,
-										SUM(w.damage) AS damage,
-										AVG(w.acc) AS acc,
+		$sql_weapons = "SELECT	ws.matchid,
+										ws.pid AS playerid,
+										ws.weapon,
+										ws.kills AS kills,
+										ws.shots AS shots,
+										ws.hits  AS hits,
+										ws.damage AS damage,
+										ws.acc AS acc,
 										pi.name AS playername,
 										pi.country AS country,
 										pi.banned AS banned,
-										wn.id AS weaponid,
-										wn.name AS weaponname,
-										wn.image AS weaponimg,
-										wn.sequence AS sequence,
-										wn.hide AS hideweapon
-							FROM		uts_weaponstats AS w,
-										uts_weapons AS wn
+										w.id AS weaponid,
+										w.name AS weaponname,
+										w.image AS weaponimg,
+										w.sequence AS sequence,
+										w.hide AS hideweapon
+							FROM		uts_weapons as w, 
+										uts_weaponstats AS ws
 							LEFT JOIN uts_pinfo AS pi
-								ON		w.pid = pi.id
-							WHERE		w.matchid = '$_mid'
-								AND	(wn.id = w.weapon)
-								AND wn.hide <> 'Y'
-							GROUP BY	w.pid,
-										w.weapon";
+								ON		ws.pid = pi.id
+							WHERE		ws.matchid = '$_mid'
+								AND	w.id = ws.weapon
+								AND w.hide <> 'Y'
+							GROUP BY	ws.pid,
+										ws.weapon";
 	}
 
 	$q_weapons = mysql_query($sql_weapons) or die(mysql_error());
 	while ($r_weapons = zero_out(mysql_fetch_array($q_weapons))) {
-		$weaponid = intval($r_weapons['weaponid']);
-		$playerid = intval($r_weapons['playerid']);
+		$weaponid = intval($r_weapons[weaponid]);
+		$playerid = intval($r_weapons[playerid]);
 		// Don't include banned players
-		if ($r_weapons['banned'] != 'Y') $psort[$playerid] = strtolower($r_weapons['playername']);
+		if ($r_weapons[banned] != 'Y') $psort[$playerid] = strtolower($r_weapons[playername]);
 
-		if ($r_weapons['damage'] > 1000000) $r_weapons['damage'] = round($r_weapons['damage'] / 1000, 0) .'K';
-//		if ($r_weapons['damage'] > 1000) $r_weapons['damage'] = round($r_weapons['damage'] / 1000, 0) .'K';
+		if ($r_weapons[damage] > 1000000) $r_weapons[damage] = round($r_weapons[damage] / 1000, 0) .'k';
+//		if ($r_weapons[damage] > 1000) $r_weapons[damage] = round($r_weapons[damage] / 1000, 0) .'k';
 
-		$wd[$playerid]['playername']			=	$r_weapons['playername'];
-		$wd[$playerid]['country']				=	$r_weapons['country'];
-		$wd[$playerid]['banned']				=	$r_weapons['banned'];
-		$wd[$playerid][$weaponid]['kills']	=	$r_weapons['kills'];
-		$wd[$playerid][$weaponid]['shots']	=	$r_weapons['shots'];
-		$wd[$playerid][$weaponid]['hits']	=	$r_weapons['hits'];
-		$wd[$playerid][$weaponid]['damage']	=	$r_weapons['damage'];
-		$wd[$playerid][$weaponid]['acc']		=	((!empty($r_weapons['acc'])) ? get_dp($r_weapons['acc']) : '');
+		$wd[$playerid][playername]			=	$r_weapons[playername];
+		$wd[$playerid][country]				=	$r_weapons[country];
+		$wd[$playerid][banned]				=	$r_weapons[banned];
+		$wd[$playerid][$weaponid][kills]	=	$r_weapons[kills];
+		$wd[$playerid][$weaponid][shots]	=	$r_weapons[shots];
+		$wd[$playerid][$weaponid][hits]	=	$r_weapons[hits];
+		$wd[$playerid][$weaponid][damage]	=	$r_weapons[damage];
+		$wd[$playerid][$weaponid][acc]		=	((!empty($r_weapons[acc])) ? get_dp($r_weapons[acc]) : '');
 
-		if (!isset($wsort[$weaponid]) and $r_weapons['hideweapon'] != 'Y') {
-			$wsort[$weaponid] = intval($r_weapons['sequence']);
-			$weapons[$weaponid]['name'] 		= $r_weapons['weaponname'];
-			$weapons[$weaponid]['image']		= $r_weapons['weaponimg'];
-			$weapons[$weaponid]['sequence']	= $r_weapons['sequence'];
+		if (!isset($wsort[$weaponid]) and $r_weapons[hideweapon] != 'Y') {
+			$wsort[$weaponid] = intval($r_weapons[sequence]);
+			$weapons[$weaponid][name] 		= $r_weapons[weaponname];
+			$weapons[$weaponid][image]		= $r_weapons[weaponimg];
+			$weapons[$weaponid][sequence]	= $r_weapons[sequence];
 		}
 	}
 	if (!isset($psort)) return;
@@ -128,7 +128,7 @@ function weaponstats($_mid, $_pid, $title = 'Weapons Summary') {
 		foreach($psort as $pid => $foo) {
 			$i++;
 			echo '<tr>';
-			if ($playercol) echo '<td nowrap class="darkhuman" align="left"><a class="darkhuman" href="./?p=matchp&amp;mid='.$_mid.'&amp;pid='.urlencode($pid).'">'.FormatPlayerName($wd[$pid]['country'], $pid,  $wd[$pid]['playername'], $gid, $gamename).'</a></td>';
+			if ($playercol) echo '<td nowrap class="darkhuman" align="left"><a class="darkhuman" href="./?p=matchp&amp;mid='.$_mid.'&amp;pid='.urlencode($pid).'">'.FormatPlayerName($wd[$pid][country], $pid,  $wd[$pid][playername], $gid, $gamename).'</a></td>';
 			foreach($wsort as $wid => $bar) {
 				ws_cell($wd, $pid, $wid, 'kills', $i);
 				ws_cell($wd, $pid, $wid, 'shots', $i);
@@ -157,10 +157,10 @@ function ws_header(&$wsort, &$weapons, $colspan, $one, $playercol) {
 	if ($playercol and $playercol != -1) echo '<td class="smheading" align="center" width="150" '.(($one) ? 'rowspan="2"' : '') .'>Player</td>';
 	if ($playercol == -1) echo '<td class="smheading" align="center" width="150">&nbsp;</td>';
 	foreach($wsort as $wid => $bar) {
-		if (!empty($weapons[$wid]['image'])) {
-			$content = '<img border="0" src="images/weapons/'.$weapons[$wid]['image'].'" alt="'.$weapons[$wid]['name'].'" title="'.$weapons[$wid]['name'].'">';
+		if (!empty($weapons[$wid][image])) {
+			$content = '<img border="0" src="images/weapons/'.$weapons[$wid][image].'" alt="'.$weapons[$wid][name].'" title="'.$weapons[$wid][name].'">';
 		} else {
-			$content = '<span style="font-size: 60%;">'.$weapons[$wid]['name'].'</span>';
+			$content = '<span style="font-size: 60%;">'.$weapons[$wid][name].'</span>';
 		}
 		echo '<td class="smheading" align="center" '. (($one) ? 'colspan="'.$colspan.'"' : 'width="35"') .'>'.$content.'</td>';
 
@@ -200,7 +200,7 @@ function ws_block(&$wd, &$weapons, &$wsort, &$psort, &$colspan, $playercol, $one
 	foreach($psort as $pid => $foo) {
 		$i++;
 		echo '<tr>';
-		if ($playercol and $playercol != -1) echo '<td nowrap class="darkhuman" align="left"><a class="darkhuman" href="./?p=matchp&amp;mid='.$_mid.'&amp;pid='.urlencode($pid).'">'.FormatPlayerName($wd[$pid]['country'], $pid, $wd[$pid]['playername'], $gid, $gamename).'</a></td>';
+		if ($playercol and $playercol != -1) echo '<td nowrap class="darkhuman" align="left"><a class="darkhuman" href="./?p=matchp&amp;mid='.$_mid.'&amp;pid='.urlencode($pid).'">'.FormatPlayerName($wd[$pid][country], $pid, $wd[$pid][playername], $gid, $gamename).'</a></td>';
 		if ($playercol == -1) echo '<td nowrap class="dark" align="center">'.$caption.'</a></td>';
 		foreach($wsort as $wid => $bar) {
 			ws_cell($wd, $pid, $wid, $field, $i);

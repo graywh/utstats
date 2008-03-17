@@ -302,6 +302,7 @@ while (false !== ($filename = readdir($logdir)))
 	$qm_suicides = small_query("SELECT SUM(col4) AS suicides FROM uts_temp_$uid WHERE col1 = 'stat_player' AND col2 = 'suicides'");
 	$qm_deaths = small_query("SELECT SUM(col4) AS deaths FROM uts_temp_$uid WHERE col1 = 'stat_player' AND col2 = 'deaths'");
 	$qm_teamkills = small_query("SELECT SUM(col4) AS teamkills FROM uts_temp_$uid WHERE col1 = 'stat_player' AND col2 = 'teamkills'");
+	$qm_ass_obj = small_query("SELECT COUNT(col1) AS ass_obj FROM uts_temp_$uid WHERE col1 = 'assault_obj'");
 
 	$qm_playercount = small_count("SELECT col3 FROM uts_temp_$uid WHERE col1 = 'player' AND col2 = 'rename' GROUP BY col3");
 
@@ -318,7 +319,7 @@ while (false !== ($filename = readdir($logdir)))
 		$s_teamkills = 0;
 	}
 	// Check if anything happened, if it didnt stop everything now
-	IF ($qm_kills[kills] == 0 && $qm_deaths[deaths] == 0)  {
+	IF ($qm_kills[kills] == 0 && $qm_deaths[deaths] == 0 && $qm_ass_obj[ass_obj] == 0)  {
 		echo "No (Empty Match)\n";
 		if ($html) echo '</td></tr>';
 	} elseIF ($qm_playercount < 2)  {
@@ -518,9 +519,9 @@ while (false !== ($filename = readdir($logdir)))
 
 			// Are they a Bot
 			$r_player1 = small_query("SELECT col4 FROM uts_temp_$uid WHERE col1 = 'player' AND col2 = 'IsABot' AND col3 = $playerid ORDER BY id DESC LIMIT 0,1");
-			$playertype = $r_player1[col4];
+			$isabot = $r_player1[col4];
 			// This player is a bot
-			if ($playertype == 'True' and $import_ignore_bots) {
+			if ($isabot == 'True' and $import_ignore_bots) {
 				$ignored_players[] = $playername;
 				// We do not want to know who killed and who was killed by this bot...
 				mysql_query("DELETE FROM uts_temp_$uid WHERE (col1 = 'kill' OR col1 = 'teamkill') AND (col2 = '$playerid' OR col4 = '$playerid');") or die(mysql_error());
@@ -534,12 +535,21 @@ while (false !== ($filename = readdir($logdir)))
 			$r_player3 = small_query("SELECT col4 FROM uts_temp_$uid WHERE col1 = 'player' AND col2 = 'TeamChange' AND col3 = $playerid ORDER BY id DESC LIMIT 0,1");
 			$playerteam = $r_player3[col4];
 
-			$qc_kills = small_query("SELECT col4 FROM uts_temp_$uid WHERE col1 = 'stat_player' AND col2 = 'kills'AND col3 = $playerid");
-			$qc_teamkills = small_query("SELECT col4 FROM uts_temp_$uid WHERE col1 = 'stat_player' AND col2 = 'teamkills' AND col3 = $playerid");
-			$qc_deaths = small_query("SELECT col4 FROM uts_temp_$uid WHERE col1 = 'stat_player' AND col2 = 'deaths' AND col3 = $playerid");
+			//$qc_kills = small_query("SELECT col4 FROM uts_temp_$uid WHERE col1 = 'stat_player' AND col2 = 'kills'AND col3 = $playerid");
+			//$qc_teamkills = small_query("SELECT col4 FROM uts_temp_$uid WHERE col1 = 'stat_player' AND col2 = 'teamkills' AND col3 = $playerid");
+			//$qc_deaths = small_query("SELECT col4 FROM uts_temp_$uid WHERE col1 = 'stat_player' AND col2 = 'deaths' AND col3 = $playerid");
+			//$qc_suicides = small_query("SELECT col4 FROM uts_temp_$uid WHERE col1 = 'stat_player' AND col2 = 'suicides' AND col3 = $playerid");
+			//$qc_score = small_query("SELECT col4 FROM uts_temp_$uid WHERE col1 = 'stat_player' AND col2 = 'deaths' AND col3 = $playerid");
 
-			// Player had no kills, deaths or teamkills => ignore
-			IF ($qc_kills[col4] == 0 && $qc_deaths[col4] == 0 && $qc_teamkills[col4] ==0) {
+			// Player had no events => ignore
+			//IF (($qc_kills[col4] + $qc_deaths[col4] + $qc_teamkills[col4] + $qc_suicides[col4]) == 0 && $qc_score[col4] == 0) {
+			//	$ignored_players[] = $playername;
+			//	continue;
+			//}
+			
+			// Player was a spectator
+			$qc_spectate = small_query("SELECT count(col1) as cnt FROM uts_temp_$uid WHERE col1 = 'player' AND col2 = 'Connect' AND col4 = $playerid");
+			IF ($qc_spectate[cnt] == 0) {
 				$ignored_players[] = $playername;
 				continue;
 			}
@@ -549,12 +559,12 @@ while (false !== ($filename = readdir($logdir)))
 
 			if ($playerbanned) {
 				// Banned players don't have a rank.
-				mysql_query("DELETE FROM uts_rank WHERE pid = '$pid'");
+				mysql_query("DELETE FROM uts_rank WHERE pid = $pid");
 
 				if ($import_ban_type == 2) {
 					// We do not want to know who killed and who was killed by this banned player
 					$ignored_players[] = $playername;
-					mysql_query("DELETE FROM uts_temp_$uid WHERE (col1 = 'kill' OR col1 = 'teamkill') AND (col2 = '$playerid' OR col4 = '$playerid');") or die(mysql_error());
+					mysql_query("DELETE FROM uts_temp_$uid WHERE (col1 = 'kill' OR col1 = 'teamkill') AND (col2 = $playerid OR col4 = $playerid);") or die(mysql_error());
 					if ($html) echo "<span style='text-decoration: line-through;'>";
 					echo "Banned:$playername ";
 					if ($html) echo "</span>";
@@ -568,6 +578,7 @@ while (false !== ($filename = readdir($logdir)))
 			IF ($gamename == "Domination" || $gamename == "Domination (insta)") { include("import/import_dom.php"); }
 			IF ($gamename == "Tournament Team Game" || $gamename == "Tournament Team Game (insta)") { include("import/import_tdm.php"); }
 			IF ($gamename == "JailBreak" || $gamename == "JailBreak (insta)") { include("import/import_jailbreak.php"); }
+			IF ($gamename == "Last Man Standing" || $gamename == "Last Man Standing (insta)") { include("import/import_lms.php"); }
 
 			// Do the rankings
 			include("import/import_ranking.php");

@@ -108,9 +108,16 @@ function my_fclose($fp, $compression) {
 
 }
 
+// Run query
+function run_query($query) {
+	$sql_run = "$query";
+	$r_run = mysql_query($sql_run) or die(mysql_error());
+	return $r_run;
+}
 
 // Small query
 function small_query($query) {
+	//echo($query);
 	$sql_small = "$query";
 	$q_small = mysql_query($sql_small) or die(mysql_error());
 	$r_small = mysql_fetch_array($q_small);

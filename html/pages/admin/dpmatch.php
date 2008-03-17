@@ -70,7 +70,7 @@ mysql_query("DELETE FROM uts_weaponstats WHERE matchid = $matchid AND pid = $pid
 </tr>
 <tr>
 	<td class="smheading" align="left" width="200">Removing Player From Match:</td>';
-mysql_query("DELETE FROM uts_player WHERE id = $pid") or die(mysql_error());
+mysql_query("DELETE FROM uts_player WHERE matchid = $matchid AND pid = $pid") or die(mysql_error());
 	echo'<td class="grey" align="left" width="400">Done</td>
 </tr>
 <tr>
