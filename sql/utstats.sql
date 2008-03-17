@@ -266,3 +266,36 @@ CREATE TABLE `uts_weaponstats` (
   `acc` float unsigned NOT NULL default '0',
   KEY `full` (`matchid`,`pid`)
 ) TYPE=MyISAM;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for view 'uts_career'
+--
+
+CREATE VIEW `uts_career` AS SELECT
+        pi.name AS name,
+        pi.country AS country,
+        pi.id AS id,
+        COUNT(distinct p.matchid) AS matches,
+        SUM(p.gamescore) AS gamescore,
+        SUM(p.frags) AS frags,
+        SUM(p.kills) AS kills,
+        SUM(p.deaths) AS deaths,
+        SUM(p.suicides) AS suicides,
+        (100*SUM(p.kills)/(SUM(p.kills)+SUM(p.deaths)+SUM(p.suicides)+SUM(p.teamkills))) AS eff,
+        ws.acc AS accuracy,
+        (SUM(p.gametime)/(SUM(p.deaths)+SUM(p.suicides)+COUNT(p.id))) AS ttl,
+        SUM(p.gametime) AS gametime,
+        (SUM(p.frags)/SUM(p.gametime)*3600) AS fph,
+        SUM(p.headshots) AS headshots,
+        SUM(p.teamkills) AS teamkills
+  FROM  uts_player AS p,
+        uts_pinfo AS pi,
+        uts_weaponstats AS ws
+  WHERE pi.id = p.pid
+    AND pi.id = ws.pid
+    AND pi.banned != 'Y'
+    AND ws.matchid = 0
+    AND ws.weapon = 0
+  GROUP BY pi.id;
