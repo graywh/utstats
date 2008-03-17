@@ -126,7 +126,6 @@ WHERE p.gid = g.id AND p.pid = '$pid' AND ws.pid = '$pid' and ws.weapon = '0' AN
 $q_plist = mysql_query($sql_plist) or die(mysql_error());
 while ($r_plist = mysql_fetch_array($q_plist))
 {
-
 	  $gametime = sec2hour($r_plist['gametime']);
 	  $eff = get_dp($r_plist['kills'] / $r_plist['sumeff'] * 100);
 	  $acc = get_dp($r_plist['accuracy']);
@@ -150,8 +149,8 @@ while ($r_plist = mysql_fetch_array($q_plist))
 	  </tr>';
 }
 
-$r_sumplist = small_query("SELECT SUM(p.gamescore) AS gamescore, SUM(p.frags) AS frags, SUM(p.kills) AS kills, SUM(p.deaths) AS deaths, SUM(p.suicides) AS suicides, SUM(p.teamkills) AS teamkills, SUM(p.kills+p.deaths+p.suicides+p.teamkills) AS sumeff, COUNT(p.id) AS games, SUM(p.gametime) as gametime, LEAST(ROUND(10000 * SUM(ws.hits)/SUM(ws.shots))/100, 100) as accuracy
-FROM uts_player AS p, uts_weaponstats as ws WHERE p.pid = '$pid' AND ws.pid = '$pid' AND ws.matchid = 0 AND ws.weapon = 0");
+$r_sumplist = small_query("SELECT SUM(p.gamescore) AS gamescore, SUM(p.frags) AS frags, SUM(p.kills) AS kills, SUM(p.deaths) AS deaths, SUM(p.suicides) AS suicides, SUM(p.teamkills) AS teamkills, SUM(p.kills+p.deaths+p.suicides+p.teamkills) AS sumeff, COUNT(p.id) AS games, SUM(p.gametime) as gametime, ws.acc as accuracy
+FROM uts_player AS p, uts_weaponstats as ws WHERE p.pid = '$pid' AND ws.pid = '$pid' AND ws.matchid = 0 AND ws.weapon = 0 GROUP BY p.pid");
 
 $gametime = sec2hour($r_sumplist['gametime']);
 $eff = get_dp($r_sumplist['kills']/$r_sumplist['sumeff']*100);
@@ -328,7 +327,7 @@ $sql_rank = "SELECT g.name AS gamename, r.rank, r.prevrank, r.matches, r.gid, r.
 $q_rank = mysql_query($sql_rank) or die(mysql_error());
 while ($r_rank = mysql_fetch_array($q_rank))
 {
-	$r_no = small_query("SELECT (COUNT(*) + 1) AS no FROM uts_rank WHERE gid= '$r_rank['gid']' and rank > ". get_dp($r_rank['rank']) ."9");
+	$r_no = small_query("SELECT (COUNT(*) + 1) AS no FROM uts_rank WHERE gid= '${r_rank['gid']}' and rank > ". get_dp($r_rank['rank']) ."9");
 	echo'<tr>
 				<td class="grey" align="center">'.RankImageOrText($r_rank['pid'], $name, $r_no['no'], $r_rank['gid'], $r_rank['gamename'], false, '%IT%').'</td>
 		<td class="grey" align="center">'.$r_rank['gamename'].'</td>

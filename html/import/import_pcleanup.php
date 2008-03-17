@@ -48,8 +48,8 @@ while ($r_pname = mysql_fetch_array($q_pname)) {
 								INTO 		uts_killsmatrix 
 								SET 		matchid = $matchid, 
 											killer = $newplayerid, 
-											victim = $r_kmupdate['victim'],
-											kills	= $r_kmupdate['kills'];");
+											victim = ${r_kmupdate['victim']},
+											kills	= ${r_kmupdate['kills']};");
 		}
 		
 		$sql_kmupdate = "	SELECT 	killer, 
@@ -64,9 +64,9 @@ while ($r_pname = mysql_fetch_array($q_pname)) {
 			mysql_query("	INSERT 	
 								INTO 		uts_killsmatrix 
 								SET 		matchid = $matchid, 
-											killer = $r_kmupdate['killer'], 
+											killer = ${r_kmupdate['killer']}, 
 											victim = $newplayerid,
-											kills	= $r_kmupdate['kills'];");
+											kills	= ${r_kmupdate['kills']};");
 		}
 		
 		mysql_query("	DELETE
@@ -129,8 +129,8 @@ while ($r_pname = mysql_fetch_array($q_pname)) {
 		SUM(p.pu_invis) AS pu_invis,
 		SUM(p.pu_belt) AS pu_belt,
 		SUM(p.pu_amp) AS pu_amp,
-		SUM(p.pu_boots) AS pu_boots,
-		FROM uts_player as p, uts_weaponstats as w
+		SUM(p.pu_boots) AS pu_boots
+		FROM uts_player AS p, uts_weaponstats AS w
 		WHERE p.matchid = '$matchid' AND p.pid = '$pid' AND w.matchid = '$matchid' AND w.pid = '$pid' AND w.weapon = 0");
 
 		// Remove all of this player's records
@@ -141,58 +141,58 @@ while ($r_pname = mysql_fetch_array($q_pname)) {
 		$upd_precord = "	INSERT 
 								INTO 	uts_player 
 								SET		matchid = '$matchid',
-										insta = '$r_truepinfo1['insta']',
+										insta = '${r_truepinfo1['insta']}',
 										playerid = '$newplayerid',
 										pid = '$pid',
-										team = '$r_truepinfo1['team']',
-										isabot = '$r_truepinfo1['isabot']',
-										country = '$r_truepinfo1['country']',
-										ip = '$r_truepinfo1['ip']',
-										gid = '$r_truepinfo1['gid']',
-										gametime = '$r_truepinfo2['gametime']',
-										gamescore = '$r_truepinfo2['gamescore']',
-										lowping = '$r_truepinfo2['lowping']',
-										highping = '$r_truepinfo2['highping']',
-										avgping = '$r_truepinfo2['avgping']',
-										frags = '$r_truepinfo2['frags']',
-										deaths = '$r_truepinfo2['deaths']',
-										kills = '$r_truepinfo2['kills']',
-										suicides = '$r_truepinfo2['suicides']',
-										teamkills = '$r_truepinfo2['teamkills']',
-										headshots = '$r_truepinfo2['headshots']',
-										eff = '$r_truepinfo2['eff']',
-										accuracy = '$r_truepinfo2['accuracy']',
-										ttl = '$r_truepinfo2['ttl']',
-										flag_taken = '$r_truepinfo2['flag_taken']',
-										flag_dropped = '$r_truepinfo2['flag_dropped']',
-										flag_return = '$r_truepinfo2['flag_return']',
-										flag_capture = '$r_truepinfo2['flag_capture']',
-										flag_cover = '$r_truepinfo2['flag_cover']',
-										flag_seal = '$r_truepinfo2['flag_seal']',
-										flag_assist = '$r_truepinfo2['flag_assist']',
-										flag_kill = '$r_truepinfo2['flag_kill']',
-										flag_pickedup = '$r_truepinfo2['flag_pickedup']',
-										dom_cp = '$r_truepinfo2['dom_cp']',
-										dom_pts = '$r_truepinfo2['dom_pts']',
-										ass_obj = '$r_truepinfo2['ass_obj']',
-										spree_double = '$r_truepinfo2['spree_double']',
-										spree_triple = '$r_truepinfo2['spree_triple']',
-										spree_multi = '$r_truepinfo2['spree_multi']',
-										spree_mega = '$r_truepinfo2['spree_mega']',
-										spree_ultra = '$r_truepinfo2['spree_ultra']',
-										spree_monster = '$r_truepinfo2['spree_monster']',
-										spree_kill = '$r_truepinfo2['spree_kill']',
-										spree_rampage = '$r_truepinfo2['spree_rampage']',
-										spree_dom = '$r_truepinfo2['spree_dom']',
-										spree_uns = '$r_truepinfo2['spree_uns']',
-										spree_god = '$r_truepinfo2['spree_god']',
-										pu_pads = '$r_truepinfo2['pu_pads']',
-										pu_armour = '$r_truepinfo2['pu_armour']',
-										pu_keg = '$r_truepinfo2['pu_keg']',
-										pu_invis = '$r_truepinfo2['pu_invis']',
-										pu_belt = '$r_truepinfo2['pu_belt']',
-										pu_amp = '$r_truepinfo2['pu_amp']',
-										pu_boots = '$r_truepinfo2['pu_boots']';";
+										team = '${r_truepinfo1['team']}',
+										isabot = '${r_truepinfo1['isabot']}',
+										country = '${r_truepinfo1['country']}',
+										ip = '${r_truepinfo1['ip']}',
+										gid = '${r_truepinfo1['gid']}',
+										gametime = '${r_truepinfo2['gametime']}',
+										gamescore = '${r_truepinfo2['gamescore']}',
+										lowping = '${r_truepinfo2['lowping']}',
+										highping = '${r_truepinfo2['highping']}',
+										avgping = '${r_truepinfo2['avgping']}',
+										frags = '${r_truepinfo2['frags']}',
+										deaths = '${r_truepinfo2['deaths']}',
+										kills = '${r_truepinfo2['kills']}',
+										suicides = '${r_truepinfo2['suicides']}',
+										teamkills = '${r_truepinfo2['teamkills']}',
+										headshots = '${r_truepinfo2['headshots']}',
+										eff = '${r_truepinfo2['eff']}',
+										accuracy = '${r_truepinfo2['accuracy']}',
+										ttl = '${r_truepinfo2['ttl']}',
+										flag_taken = '${r_truepinfo2['flag_taken']}',
+										flag_dropped = '${r_truepinfo2['flag_dropped']}',
+										flag_return = '${r_truepinfo2['flag_return']}',
+										flag_capture = '${r_truepinfo2['flag_capture']}',
+										flag_cover = '${r_truepinfo2['flag_cover']}',
+										flag_seal = '${r_truepinfo2['flag_seal']}',
+										flag_assist = '${r_truepinfo2['flag_assist']}',
+										flag_kill = '${r_truepinfo2['flag_kill']}',
+										flag_pickedup = '${r_truepinfo2['flag_pickedup']}',
+										dom_cp = '${r_truepinfo2['dom_cp']}',
+										dom_pts = '${r_truepinfo2['dom_pts']}',
+										ass_obj = '${r_truepinfo2['ass_obj']}',
+										spree_double = '${r_truepinfo2['spree_double']}',
+										spree_triple = '${r_truepinfo2['spree_triple']}',
+										spree_multi = '${r_truepinfo2['spree_multi']}',
+										spree_mega = '${r_truepinfo2['spree_mega']}',
+										spree_ultra = '${r_truepinfo2['spree_ultra']}',
+										spree_monster = '${r_truepinfo2['spree_monster']}',
+										spree_kill = '${r_truepinfo2['spree_kill']}',
+										spree_rampage = '${r_truepinfo2['spree_rampage']}',
+										spree_dom = '${r_truepinfo2['spree_dom']}',
+										spree_uns = '${r_truepinfo2['spree_uns']}',
+										spree_god = '${r_truepinfo2['spree_god']}',
+										pu_pads = '${r_truepinfo2['pu_pads']}',
+										pu_armour = '${r_truepinfo2['pu_armour']}',
+										pu_keg = '${r_truepinfo2['pu_keg']}',
+										pu_invis = '${r_truepinfo2['pu_invis']}',
+										pu_belt = '${r_truepinfo2['pu_belt']}',
+										pu_amp = '${r_truepinfo2['pu_amp']}',
+										pu_boots = '${r_truepinfo2['pu_boots']}';";
 		mysql_query($upd_precord) or die(mysql_error());
 		$cleaned = true;
 	}
