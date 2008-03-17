@@ -1,15 +1,16 @@
 <?
 // Database connection details
 $dbname = "utstats";
-$hostname = "127.0.0.1";
+$hostname = "localhost";
+#$hostname = "127.0.0.1";
 $uname = "utserver";
 $upass = "utstats";
 
-$dbconnect = mysql_connect($hostname,$uname,$upass);
+$dbconnect = mysql_pconnect($hostname,$uname,$upass);
 $dbconnect2 = mysql_select_db($dbname);
 
 // The key needed to run the import script
-$import_adminkey = 'llama';
+$import_adminkey = '114m4';
 
 // When runnning from the command-line (cron jobs):
 // The absolute path to UTStats's home directory.

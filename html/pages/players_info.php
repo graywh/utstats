@@ -119,7 +119,7 @@ echo '
   </tr>';
 
 $sql_plist = "SELECT g.name AS gamename, SUM(p.gamescore) AS gamescore, SUM(p.frags) AS frags, SUM(p.kills) AS kills, SUM(p.deaths) AS deaths,
-SUM(p.suicides) AS suicides, SUM(p.teamkills) AS teamkills, SUM(p.kills+p.deaths+p.suicides+p.teamkills) AS sumeff, LEAST(ROUND(10000 * SUM(ws.hits)/SUM(ws.shots)),100) AS accuracy, COUNT(p.id) AS games, SUM(p.gametime) as gametime
+SUM(p.suicides) AS suicides, SUM(p.teamkills) AS teamkills, SUM(p.kills+p.deaths+p.suicides+p.teamkills) AS sumeff, LEAST(ROUND(10000 * SUM(ws.hits)/SUM(ws.shots))/100,100) AS accuracy, COUNT(p.id) AS games, SUM(p.gametime) as gametime
 FROM uts_player AS p, uts_games AS g, uts_weaponstats as ws
 WHERE p.gid = g.id AND p.pid = '$pid' AND ws.pid = '$pid' and ws.weapon = '0' AND ws.matchid = p.matchid GROUP BY p.gid";
 

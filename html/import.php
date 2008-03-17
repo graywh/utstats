@@ -289,7 +289,8 @@ while (false !== ($filename = readdir($logdir)))
 	$qm_serverport = small_query("SELECT col3 FROM uts_temp_$uid WHERE col1 = 'info' AND col2 = 'Server_Port'");
 	$qm_gamename = small_query("SELECT col3 FROM uts_temp_$uid WHERE col1 = 'game' AND col2 = 'GameName'");
 
-	$qm_gamestart = small_query("SELECT col0 FROM uts_temp_$uid WHERE col1 = 'game' AND col2 = 'realstart'");
+	#$qm_gamestart = small_query("SELECT col0 FROM uts_temp_$uid WHERE col1 = 'game' AND col2 = 'realstart'");
+	$qm_gamestart = small_query("SELECT col0 FROM uts_temp_$uid WHERE col1 = 'player' AND col2 = 'Rename'");
 	$qm_gameend = small_query("SELECT col0 FROM uts_temp_$uid WHERE col1 = 'game_end'");
 
 	$qm_insta = small_query("SELECT col3 FROM uts_temp_$uid WHERE col1 = 'game' AND col2 = 'insta'");
