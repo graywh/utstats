@@ -264,7 +264,9 @@ CREATE TABLE `uts_weaponstats` (
   `hits` int(10) unsigned NOT NULL default '0',
   `damage` int(10) unsigned NOT NULL default '0',
   `acc` float unsigned NOT NULL default '0',
-  KEY `full` (`matchid`,`pid`)
+  UNIQUE KEY `full` (`matchid`,`pid`,`weapon`),
+  KEY `pid_weapon` (`pid`,`weapon`),
+  KEY `weapon` (`weapon`)
 ) TYPE=MyISAM;
 
 -- --------------------------------------------------------
