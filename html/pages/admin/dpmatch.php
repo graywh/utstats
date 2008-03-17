@@ -82,25 +82,70 @@ mysql_query("DELETE FROM uts_player WHERE matchid = $matchid AND pid = $pid") or
 </tr>
 <tr>
 	<td class="smheading" align="left" width="200">Amending Player Weapon Stats:</td>';
-mysql_query("DELETE FROM uts_weaponstats WHERE matchid IN ('$matchid','0') AND pid = '$pid'") or die(mysql_error());
-
-$q_weaponstats = mysql_query("SELECT SUM(kills) AS kills, SUM(shots) AS shots, SUM(hits) as hits, SUM(damage) as damage, LEAST(ROUND(10000*SUM(hits)/SUM(shots))/100,100) AS acc FROM uts_weaponstats WHERE pid = '$pid'  GROUP BY weapon") or die(mysql_error());
-while ($r_weaponstats = mysql_fetch_array($q_weaponstats))
-{
-	mysql_query("INSERT INTO uts_weaponstats SET matchid='0', pid='$pid', kills='${r_weaponstats['kills']}', shots='${r_weaponstats['shots']}', hits='${r_weaponstats['hits']}', damage='${r_weaponstats['damage']}', acc='${r_weaponstats['acc']}'") or die(mysql_error());
-}
+// Update the player's weapon statistics (matchid 0)
+mysql_query("	REPLACE	uts_weaponstats
+				SELECT	0 AS matchid,
+						pid,
+						weapon,
+						SUM(kills) AS kills,
+						SUM(shots) AS shots,
+						SUM(hits) AS hits,
+						SUM(damage) AS damage,
+						LEAST(ROUND(10000*SUM(hits)/SUM(shots))/100, 100) AS acc
+				FROM	uts_weaponstats
+				WHERE	pid = '$pid'
+					AND weapon > 0
+					AND matchid > 0
+				GROUP BY weapon;"
+) or die(mysql_error());
+// Update the player's career statistics (weapon 0, match 0)
+mysql_query("	REPLACE	uts_weaponstats
+				SELECT	0 AS matchid,
+						'$pid' AS pid,
+						0 AS weapon,
+						SUM(kills) AS kills,
+						SUM(shots) AS shots,
+						SUM(hits) AS hits,
+						SUM(damage) AS damage,
+						LEAST(ROUND(10000*SUM(hits)/SUM(shots))/100, 100) AS acc
+				FROM	uts_weaponstats
+				WHERE	matchid > 0
+					AND	pid = '$pid'
+					AND weapon > 0;"
+) or die(mysql_error());
 	echo'<td class="grey" align="left" width="400">Done</td>
 </tr>
 <tr>
 	<td class="smheading" align="left" width="200">Amending Global Weapon Stats:</td>';
-	mysql_query("DELETE FROM uts_weaponstats WHERE matchid='0' AND pid='0'") or die(mysql_error());
-
-	$q_weaponstats = mysql_query("SELECT weapon, SUM(kills) AS kills, SUM(shots) AS shots, SUM(hits) as hits, SUM(damage) as damage, LEAST(ROUND(10000*SUM(hits)/SUM(shots))/100,100) AS acc FROM uts_weaponstats WHERE matchid = '0'  GROUP BY weapon") or die(mysql_error());
-	while ($r_weaponstats = mysql_fetch_array($q_weaponstats))
-	{
-		mysql_query("INSERT INTO uts_weaponstats SET matchid='0', pid='0', weapon='${r_weaponstats['weapon']}', kills='${r_weaponstats['kills']}', shots='${r_weaponstats['shots']}', hits='${r_weaponstats['hits']}', damage='${r_weaponstats['damage']}', acc='${r_weaponstats['acc']}'") or die(mysql_error());
-	}
-
+mysql_query("	REPLACE uts_weaponstats
+				SELECT	0 AS matchid,
+						0 AS pid,
+						weapon,
+						SUM(kills) AS kills,
+						SUM(shots) AS shots,
+						SUM(hits) AS hits,
+						SUM(damage) AS damage,
+						LEAST(ROUND(10000*SUM(hits)/SUM(shots))/100, 100) AS acc
+				FROM	uts_weaponstats
+				WHERE	matchid > 0
+					AND	pid > 0
+					AND weapon > 0
+				GROUP BY weapon;"
+) or die(mysql_error());
+mysql_query("	REPLACE uts_weaponstats
+				SELECT	0 AS matchid,
+						0 AS pid,
+						0 AS weapon,
+						SUM(kills) AS kills,
+						SUM(shots) AS shots,
+						SUM(hits) AS hits,
+						SUM(damage) AS damage,
+						LEAST(ROUND(10000*SUM(hits)/SUM(shots))/100, 100) AS acc
+				FROM	uts_weaponstats
+				WHERE	matchid > 0
+					AND	pid > 0
+					AND weapon > 0;"
+) or die(mysql_error());
 	echo'<td class="grey" align="left" width="400">Done</td>
 </tr>
 
