@@ -1,7 +1,7 @@
 <?
 // Get filter and set sorting
-$playername = my_stripslashes($_POST[name]);
-$playersearch = my_addslashes($_POST[name]);
+$playername = my_stripslashes($_POST['name']);
+$playersearch = my_addslashes($_POST['name']);
 
 echo'
 <form NAME="playersearch" METHOD="post" ACTION="./?p=psearch">
@@ -16,7 +16,7 @@ echo'
 </form>
 <table class="box" border="0" cellpadding="1" cellspacing="1">
   <tbody><tr>
-    <td class="heading" colspan="11" align="center">Player Search List</td>
+    <td class="heading" colspan="12" align="center">Player Search List</td>
   </tr>
   <tr>
     <td class="smheading" align="center" width="150"><a class="smheading" href="./?p=players&amp;filter=name">Player Name</a></td>
@@ -26,6 +26,7 @@ echo'
     <td class="smheading" align="center" width="50"><a class="smheading" href="./?p=players&amp;filter=kills">Kills</a></td>
     <td class="smheading" align="center" width="50"><a class="smheading" href="./?p=players&amp;filter=deaths">Deaths</a></td>
     <td class="smheading" align="center" width="50"><a class="smheading" href="./?p=players&amp;filter=suicides">Suicides</a></td>
+	<td class="smheading" align="center" width="50"><a class="smheading" href="./?p=players&amp;filter=suicides">Headshots</a></td>
     <td class="smheading" align="center" width="45"><a class="smheading" href="./?p=players&amp;filter=eff">Eff.</a></td>
     <td class="smheading" align="center" width="45"><a class="smheading" href="./?p=players&amp;filter=accuracy">Acc.</a></td>
     <td class="smheading" align="center" width="45"><a class="smheading" href="./?p=players&amp;filter=ttl">TTL</a></td>
@@ -33,26 +34,29 @@ echo'
   </tr>';
 
 $sql_plist = "SELECT pi.name AS name, pi.country AS country, p.pid, COUNT(p.id) AS games, SUM(p.gamescore) as gamescore, SUM(p.frags) AS frags, SUM(p.kills) AS kills,
-SUM(p.deaths) AS deaths, SUM(p.suicides) as suicides, AVG(p.eff) AS eff, AVG(p.accuracy) AS accuracy, AVG(p.ttl) AS ttl, SUM(gametime) as gametime
-FROM uts_player AS p, uts_pinfo AS pi WHERE p.pid = pi.id AND pi.name LIKE '%".$playersearch."%' AND pi.banned <> 'Y' GROUP BY name ORDER BY name";
+SUM(p.deaths) AS deaths, SUM(p.suicides) as suicides, SUM(p.headshots) as headshots, (SUM(p.kills)+SUM(p.deaths)+SUM(p.suicides)+SUM(p.teamkills)) AS eff, LEAST(ROUND(10000*SUM(w.hits)/SUM(w.shots))/100,100) AS accuracy, SUM(gametime) as gametime
+FROM uts_player AS p, uts_pinfo AS pi, uts_weaponstats as w
+WHERE p.pid = pi.id AND w.pid = pi.id AND w.matchid = p.matchid AND w.weapon = 0 AND pi.name LIKE '%".$playersearch."%' AND pi.banned <> 'Y'
+GROUP BY name ORDER BY name";
 
 $q_plist = mysql_query($sql_plist) or die(mysql_error());
-while ($r_plist = mysql_fetch_array($q_plist)) {
+while ($r_plist = mysql_fetch_array($q_plist))
+{
 
-	  $gametime = sec2hour($r_plist[gametime]);
-	  $eff = get_dp($r_plist[eff]);
-	  $acc = get_dp($r_plist[accuracy]);
-	  $ttl = GetMinutes($r_plist[ttl]);
+	  $gametime = sec2hour($r_plist['gametime']);
+	  $eff = get_dp($r_plist['frags'] / $r_plist['eff']);
+	  $acc = get_dp($r_plist['accuracy']);
+	  $ttl = GetMinutes($r_plist['gametime'] / ($r_plist['deaths'] + $r_plist['suicids'] + $r_plist['games']));
 	  
 	  echo'
 	  <tr>
-		<td nowrap class="dark" align="left"><a class="darkhuman" href="./?p=pinfo&amp;pid='.$r_plist['pid'].'">'.FormatPlayerName($r_plist[country], $r_plist['pid'], $r_plist[name]).'</a></td>
-		<td class="grey" align="center">'.$r_plist[games].'</td>
-		<td class="grey" align="center">'.$r_plist[gamescore].'</td>
-		<td class="grey" align="center">'.$r_plist[frags].'</td>
-		<td class="grey" align="center">'.$r_plist[kills].'</td>
-		<td class="grey" align="center">'.$r_plist[deaths].'</td>
-		<td class="grey" align="center">'.$r_plist[suicides].'</td>
+		<td nowrap class="dark" align="left"><a class="darkhuman" href="./?p=pinfo&amp;pid='.$r_plist['pid'].'">'.FormatPlayerName($r_plist['country'], $r_plist['pid'], $r_plist['name']).'</a></td>
+		<td class="grey" align="center">'.$r_plist['games'].'</td>
+		<td class="grey" align="center">'.$r_plist['gamescore'].'</td>
+		<td class="grey" align="center">'.$r_plist['frags'].'</td>
+		<td class="grey" align="center">'.$r_plist['kills'].'</td>
+		<td class="grey" align="center">'.$r_plist['deaths'].'</td>
+		<td class="grey" align="center">'.$r_plist['suicides'].'</td>
 		<td class="grey" align="center">'.$eff.'</td>
 		<td class="grey" align="center">'.$acc.'</td>
 		<td class="grey" align="center">'.$ttl.'</td>

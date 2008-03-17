@@ -42,7 +42,7 @@ mysql_query("UPDATE uts_player SET pid = $mplayer1  WHERE pid = $mplayer2") or d
 </tr>
 <tr>
 	<td class="smheading" align="left" width="200">Updating Weapon Records</td>';
-mysql_query("UPDATE uts_weaponstats SET pid = $mplayer1  WHERE pid = $mplayer2") or die(mysql_error());
+mysql_query("UPDATE uts_weaponstats SET pid = $mplayer1 WHERE pid = $mplayer2") or die(mysql_error());
 mysql_query("DELETE FROM uts_weaponstats WHERE pid = $mplayer2") or die(mysql_error());
 	echo'<td class="grey" align="left" width="400">Done</td>
 </tr>
@@ -50,8 +50,9 @@ mysql_query("DELETE FROM uts_weaponstats WHERE pid = $mplayer2") or die(mysql_er
 	<td class="smheading" align="left" width="200">Amending Player Weapon Stats:</td>';
 mysql_query("DELETE FROM uts_weaponstats WHERE matchid='0' AND pid = '$mplayer1'") or die(mysql_error());
 
-$q_weaponstats = mysql_query("SELECT weapon, SUM(kills) AS kills, SUM(shots) AS shots, SUM(hits) as hits, SUM(damage) as damage, AVG(acc) AS acc FROM uts_weaponstats WHERE pid = '$mplayer1'  GROUP BY weapon") or die(mysql_error());
-while ($r_weaponstats = mysql_fetch_array($q_weaponstats)) {
+$q_weaponstats = mysql_query("SELECT weapon, SUM(kills) AS kills, SUM(shots) AS shots, SUM(hits) as hits, SUM(damage) as damage, LEAST(ROUND(10000*SUM(hits)/SUM(shots))/100,100) AS acc FROM uts_weaponstats WHERE pid = '$mplayer1' GROUP BY weapon") or die(mysql_error());
+while ($r_weaponstats = mysql_fetch_array($q_weaponstats))
+{
 	mysql_query("INSERT INTO uts_weaponstats SET matchid='0', pid='$mplayer1',  weapon='${r_weaponstats['weapon']}', kills='${r_weaponstats['kills']}', shots='${r_weaponstats['shots']}', hits='${r_weaponstats['hits']}', damage='${r_weaponstats['damage']}', acc='${r_weaponstats['acc']}'") or die(mysql_error());
 }
 	echo'<td class="grey" align="left" width="400">Done</td>
@@ -71,7 +72,8 @@ mysql_query("UPDATE uts_rank SET pid = $mplayer2 WHERE pid= $mplayer1") or die(m
 
 $sql_nrank = "SELECT SUM(time) AS time, pid, gid, AVG(rank) AS rank, AVG(prevrank) AS prevrank, SUM(matches) AS matches FROM uts_rank WHERE pid = $mplayer2 GROUP BY pid, gid";
 $q_nrank = mysql_query($sql_nrank) or die(mysql_error());
-while ($r_nrank = mysql_fetch_array($q_nrank)) {
+while ($r_nrank = mysql_fetch_array($q_nrank))
+{
 
 	mysql_query("INSERT INTO uts_rank SET time = '$r_nrank[time]', pid = $mplayer1, gid = $r_nrank[gid], rank = '$r_nrank[rank]', prevrank = '$r_nrank[prevrank]', matches = $r_nrank[matches]") or die(mysql_error());
 }

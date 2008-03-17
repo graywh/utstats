@@ -136,11 +136,11 @@ foreach($weapons as $playerid => $weapon)		// For each player
 							SET		matchid = '$matchid',
 									pid = '$playerid',
 									weapon = '$weaponid',
-									kills = '${infos['weap_kills']}',
-									shots = '${infos['weap_shotcount']}',
-									hits = '${infos['weap_hitcount']}',
-									damage = '${infos['weap_damagegiven']}',
-									acc = '${infos['weap_accuracy']}';"
+									kills = '$infos['weap_kills']',
+									shots = '$infos['weap_shotcount']',
+									hits = '$infos['weap_hitcount']',
+									damage = '$infos['weap_damagegiven']',
+									acc = '$infos['weap_accuracy']';"
 					) or die(mysql_error());
 						
 		// Summarize totals for this match (playerid 0)
@@ -179,11 +179,11 @@ foreach($weapons as $playerid => $weapon)		// For each player
 								SET		matchid = '0',
 										pid = '$playerid',
 										weapon = '$weaponid',
-										kills = '${infos['weap_kills']}',
-										shots = '${infos['weap_shotcount']}',
-										hits = '${infos['weap_hitcount']}',
-										damage = '${infos['weap_damagegiven']}',
-										acc = '${infos['weap_accuracy']}';"
+										kills = '$infos['weap_kills']',
+										shots = '$infos['weap_shotcount']',
+										hits = '$infos['weap_hitcount']',
+										damage = '$infos['weap_damagegiven']',
+										acc = '$infos['weap_accuracy']';"
 						) or die(mysql_error());
 		// Yes -> update 
 		}
@@ -205,11 +205,11 @@ foreach($weapons as $playerid => $weapon)		// For each player
 			}
 			
 			mysql_query("	UPDATE	uts_weaponstats
-								SET		kills = '${r_pstat['kills']}',
-										shots = '${r_pstat['shots']}',
-										hits = '${r_pstat['hits']}',
-										damage = '${r_pstat['damage']}',
-										acc = '${r_pstat['acc']}'
+								SET		kills = '$r_pstat['kills']',
+										shots = '$r_pstat['shots']',
+										hits = '$r_pstat['hits']',
+										damage = '$r_pstat['damage']',
+										acc = '$r_pstat['acc']'
 								WHERE	matchid = '0'
 									AND	pid = '$playerid'
 									AND	weapon = '$weaponid';"
@@ -229,10 +229,12 @@ foreach($weapons as $playerid => $weapon)		// For each player
 								LEAST(ROUND(10000*SUM(hits)/SUM(shots))/100, 100) AS acc
 						FROM	uts_weaponstats
 						WHERE	matchid = '$matchid'
-							AND	pid = '$playerid';"
+							AND	pid = '$playerid'
+						GROUP BY	pid,
+								matchid;"
 				) or die(mysql_error());
 	mysql_query("	UPDATE		uts_player
-						SET accuracy = '${s_mplayer['acc']}'
+						SET accuracy = '$s_mplayer['acc']'
 						WHERE	matchid = '$matchid'
 							AND	pid = '$playerid';"
 				) or die(mysql_error());
@@ -284,11 +286,11 @@ foreach($weapons as $playerid => $weapon)		// For each player
 		}
 		
 		mysql_query("	UPDATE	uts_weaponstats
-							SET		kills = '${r_pstat['kills']}',
-									shots = '${r_pstat['shots']}',
-									hits = '${r_pstat['hits']}',
-									damage = '${r_pstat['damage']}',
-									acc = '${r_pstat['acc']}'
+							SET		kills = '$r_pstat['kills']',
+									shots = '$r_pstat['shots']',
+									hits = '$r_pstat['hits']',
+									damage = '$r_pstat['damage']',
+									acc = '$r_pstat['acc']'
 							WHERE	matchid = '0'
 								AND	pid = '$playerid'
 								AND	weapon = '0';"
@@ -343,11 +345,11 @@ foreach($s_weapons as $weaponid => $infos)		// For each weapon
 							SET		matchid = '0',
 									pid = '0',
 									weapon = '$weaponid',
-									kills = '${infos['weap_kills']}',
-									shots = '${infos['weap_shotcount']}',
-									hits = '${infos['weap_hitcount']}',
-									damage = '${infos['weap_damagegiven']}',
-									acc = '${infos['weap_accuracy']}';"
+									kills = '$infos['weap_kills']',
+									shots = '$infos['weap_shotcount']',
+									hits = '$infos['weap_hitcount']',
+									damage = '$infos['weap_damagegiven']',
+									acc = '$infos['weap_accuracy']';"
 					) or die(mysql_error());
 	// Yes -> update 
 	}
@@ -369,11 +371,11 @@ foreach($s_weapons as $weaponid => $infos)		// For each weapon
 			}
 		
 			mysql_query("	UPDATE	uts_weaponstats
-								SET		kills = '${r_pstat['kills']}',
-										shots = '${r_pstat['shots']}',
-										hits = '${r_pstat['hits']}',
-										damage = '${r_pstat['damage']}',
-										acc = '${r_pstat['acc']}'
+								SET		kills = '$r_pstat['kills']',
+										shots = '$r_pstat['shots']',
+										hits = '$r_pstat['hits']',
+										damage = '$r_pstat['damage']',
+										acc = '$r_pstat['acc']'
 								WHERE	matchid = '0'
 									AND	pid = '0'
 									AND	weapon = '$weaponid';"
@@ -403,11 +405,11 @@ if (!$r_pglobal)
 	}
 	mysql_query("	INSERT
 						INTO	uts_weaponstats
-						SET		kills = '${s_global['kills']}',
-								shots = '${s_global['shots']}',
-								hits = '${s_global['hits']}',
-								damage = '${s_global['damage']}',
-								acc = '${s_global['acc']}'
+						SET		kills = '$s_global['kills']',
+								shots = '$s_global['shots']',
+								hits = '$s_global['hits']',
+								damage = '$s_global['damage']',
+								acc = '$s_global['acc']'
 						WHERE	matchid = '0'
 							AND	pid = '0'
 							AND weapon = '0';"
@@ -432,11 +434,11 @@ else
 	}
 	
 	mysql_query("	UPDATE	uts_weaponstats
-						SET		kills = '${r_pglobal['kills']}',
-								shots = '${r_pglobal['shots']}',
-								hits = '${r_pglobal['hits']}',
-								damage = '${r_pglobal['damage']}',
-								acc = '${r_pglobal['acc']}'
+						SET		kills = '$r_pglobal['kills']',
+								shots = '$r_pglobal['shots']',
+								hits = '$r_pglobal['hits']',
+								damage = '$r_pglobal['damage']',
+								acc = '$r_pglobal['acc']'
 						WHERE	matchid = '0'
 							AND	pid = '0'
 							AND weapon = '0';"

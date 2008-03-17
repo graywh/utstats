@@ -6,13 +6,15 @@ require ("includes/functions.php");
 if (!isset($pic_enable) or !$pic_enable) pic_error('err_disabled');
 
 
-function pic_error($name) {
+function pic_error($name)
+{
 	header("Content-type: image/png");
-	readfile("images/templates/${name}.png");
+	readfile("images/templates/$name.png");
 	exit;
 }
 
-function place_text(&$im, $size, $angle, $x, $to_x, $y, $to_y, $color, $font, $align, $text) {
+function place_text(&$im, $size, $angle, $x, $to_x, $y, $to_y, $color, $font, $align, $text)
+{
 	$cp = allocate_color($im, $color);
 	$box = imagettfbbox($size, $angle, $font, $text);
 	$twidth = $box[4] - $box[0];
@@ -28,11 +30,13 @@ function place_text(&$im, $size, $angle, $x, $to_x, $y, $to_y, $color, $font, $a
 	imagettftext($im, $size, $angle, $p_x, $y, $cp, $font, $text);
 }
 
-function image_create($filename, &$load) {
+function image_create($filename, &$load)
+{
 	if (!file_exists($filename)) return(false);
 	$infos = getimagesize($filename);
 	if (!$infos) return(false);
-	switch($infos[2]) {
+	switch($infos[2])
+	{
 		case 1:
 			$im = @imagecreatefromgif($filename);
 			break;
@@ -49,7 +53,8 @@ function image_create($filename, &$load) {
 	if (!$load['recreate']) return($im);
 	
 	$in = imagecreatetruecolor(imagesx($im), imagesy($im));
-	if (!empty($load['bgcolor'])) {
+	if (!empty($load['bgcolor']))
+	{
 		$bg = allocate_color($in, $load['bgcolor']);
 		imagefill($in, 0, 0, $bg);
 	}
@@ -61,7 +66,8 @@ function image_create($filename, &$load) {
 }
 
 
-function allocate_color(&$im, $colstring) {
+function allocate_color(&$im, $colstring)
+{
 	static $cache = array();
 	
 	if (isset($cache[$colstring])) return($cache[$colstring]);
@@ -70,18 +76,23 @@ function allocate_color(&$im, $colstring) {
 	$r = hexdec($col[0]);
 	$g = hexdec($col[1]);
 	$b = hexdec($col[2]);
-	if (isset($col[3])) {
+	if (isset($col[3]))
+	{
 		$alpha = hexdec($col[3]);
 		$cp = imagecolorallocatealpha($im, $r, $g, $b, $alpha);	
-	} else {
+	}
+	else
+	{
 		$cp = imagecolorallocate($im, $r, $g, $b);	
 	}
 	$cache[$colstring] = $cp;
 	return($cp);	
 }
 
-function output_image(&$im, &$options) {
-	switch($options['type']) {
+function output_image(&$im, &$options)
+{
+	switch($options['type'])
+	{
 		case 'jpg':
 			header("Content-type: image/jpeg");
 			imagejpeg($im);
@@ -99,14 +110,17 @@ function output_image(&$im, &$options) {
 }
 
 
-function replace_vars($text, &$searchrepl) {
+function replace_vars($text, &$searchrepl)
+{
 	static $search = NULL;
 	static $replace = NULL;
 	
-	if ($search === NULL) {
+	if ($search === NULL)
+	{
 		$search = array();
 		$replace = array();
-		foreach($searchrepl as $key => $value) {
+		foreach($searchrepl as $key => $value)
+		{
 			$search[] = $key;
 			$replace[] = $value;
 		}
@@ -114,7 +128,8 @@ function replace_vars($text, &$searchrepl) {
 
 	$text = str_replace($search, $replace, $text);
 
-	if (!empty($searchrepl['%GID%'])) {
+	if (!empty($searchrepl['%GID%']))
+	{
 		$rankingtext = RankImageOrText($searchrepl['%PID%'], $searchrepl['%PLAYERNAME%'], 0, $searchrepl['%GID%'], $searchrepl['%GAMENAME%'], false, $text, NULL);
 		if (!empty($rankingtext)) $text = $rankingtext;
 	}
@@ -123,7 +138,8 @@ function replace_vars($text, &$searchrepl) {
 
 
 
-function get_values($date_from, $date_to, $pid, $gid, $prefix, &$searchrepl) {
+function get_values($date_from, $date_to, $pid, $gid, $prefix, &$searchrepl)
+{
 	$sql_time = (empty($date_from)) ? '' : "AND	m.time >= '".date("YmdHis", $week_start)."' and m.time <= '".date("YmdHis", $week_end);
 	$sql_gid = (empty($gid)) ? '' : "AND m.gid = '$gid'";
 	$sql_order = ($prefix != 'LM') ? '' : 'ORDER BY m.time DESC LIMIT 0,1';
@@ -134,53 +150,62 @@ function get_values($date_from, $date_to, $pid, $gid, $prefix, &$searchrepl) {
 							SUM(p.frags) AS frags, 
 							SUM(p.kills) AS kills,
 							SUM(p.deaths) AS deaths, 
-							SUM(p.suicides) as suicides, 
-							AVG(p.eff) AS eff, 
-							AVG(p.accuracy) AS acc, 
-							AVG(p.ttl) AS ttl, 
-							SUM(p.gametime) as gametime,
-							SUM(p.flag_capture) as flag_capture,
-							SUM(p.flag_cover) as flag_cover,
-							SUM(p.flag_seal) as flag_cover,
-							SUM(p.flag_assist) as flag_assist,
-							SUM(p.flag_kill) as flag_kill,
-							SUM(p.flag_pickedup) as flag_pickedup,
-							SUM(p.dom_cp) as dom_cp,
-							SUM(p.ass_obj) as ass_obj,
-							SUM(p.spree_double) as spree_double,
-							SUM(p.spree_triple) as spree_triple,
-							SUM(p.spree_multi) as spree_multi,
-							SUM(p.spree_mega) as spree_mega,
-							SUM(p.spree_ultra) as spree_ultra,
-							SUM(p.spree_monster) as spree_monster,
-							SUM(p.spree_kill) as spree_kill,
-							SUM(p.spree_rampage) as spree_rampage,
-							SUM(p.spree_dom) as spree_dom,
-							SUM(p.spree_uns) as spree_uns,
-							SUM(p.spree_god) as spree_god,
-							SUM(p.pu_pads) as pu_pads,
-							SUM(p.pu_armour) as pu_armour,
-							SUM(p.pu_keg) as pu_keg,
-							SUM(p.pu_invis) as pu_invis,
-							SUM(p.pu_belt) as pu_belt,
-							SUM(p.pu_amp) as pu_amp,
-							SUM(p.rank) as rankmovement
+							SUM(p.suicides) AS suicides,
+							SUM(p.teamkills) AS teamkills,
+							0 AS eff, 
+							LEAST(ROUND(10000*SUM(w.hits)/SUM(w.shots))/100,100) AS acc, 
+							0 AS ttl,
+							SUM(p.gametime) AS gametime,
+							SUM(p.flag_capture) AS flag_capture,
+							SUM(p.flag_cover) AS flag_cover,
+							SUM(p.flag_seal) AS flag_cover,
+							SUM(p.flag_assist) AS flag_assist,
+							SUM(p.flag_kill) AS flag_kill,
+							SUM(p.flag_pickedup) AS flag_pickedup,
+							SUM(p.dom_cp) AS dom_cp,
+							SUM(p.dom_pts) AS dom_pts,
+							SUM(p.ass_obj) AS ass_obj,
+							SUM(p.spree_double) AS spree_double,
+							SUM(p.spree_triple) AS spree_triple,
+							SUM(p.spree_multi) AS spree_multi,
+							SUM(p.spree_mega) AS spree_mega,
+							SUM(p.spree_ultra) AS spree_ultra,
+							SUM(p.spree_monster) AS spree_monster,
+							SUM(p.spree_kill) AS spree_kill,
+							SUM(p.spree_rampage) AS spree_rampage,
+							SUM(p.spree_dom) AS spree_dom,
+							SUM(p.spree_uns) AS spree_uns,
+							SUM(p.spree_god) AS spree_god,
+							SUM(p.pu_pads) AS pu_pads,
+							SUM(p.pu_armour) AS pu_armour,
+							SUM(p.pu_keg) AS pu_keg,
+							SUM(p.pu_invis) AS pu_invis,
+							SUM(p.pu_belt) AS pu_belt,
+							SUM(p.pu_amp) AS pu_amp,
+							SUM(p.pu_boots) AS pu_boots,
+							SUM(p.rank) AS rankmovement
 				FROM 		uts_match AS m,
-							uts_player AS p
+							uts_player AS p,
+							uts_weaponstats AS w,
 				WHERE 	m.id = p.matchid
-							$sql_time
-							$sql_gid
-					AND   p.pid = '$pid'
-				GROUP BY $sql_groupby
-							$sql_order";
+							'$sql_time'
+							'$sql_gid'
+					AND	p.pid = '$pid'
+					AND	w.pid = '$pid'
+					AND w.matchid = p.matchid
+					AND w.weapon = 0
+				GROUP BY '$sql_groupby'
+							'$sql_order'";
 	$result = small_query($sql);	
 	if (!$result) return;
-	foreach($result as $name => $value) {
+	foreach($result as $name => $value)
+	{
 		$name = strtoupper($name);
-		switch($name) {
-			case 'EFF': $value = get_dp($value); break;
+		switch($name)
+		{
+			case 'EFF': $value = get_dp(100 * $result['kills'] / ($result['kills'] + $result['deaths'] + $result['suicides'] + $result['teamkills']); break;
 			case 'ACC': $value = get_dp($value); break;
-			case 'TTL': $value = GetMinutes($value); break;
+			case 'TTL': $value = GetMinutes($result['gametime'] / ($result['deaths'] + $resuls['suicides'] + $result['games'])); break;
 			case 'GAMETIME': $value = sec2hour($value); break;
 			case 'GAMEDATE': $value = date("Y-m-d H:i", mtimestamp($value)); break;
 			case 'RANKMOVEMENT': $value = ($value >= 0) ? '+'.get_dp($value) : get_dp($value); break;
