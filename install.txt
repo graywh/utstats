@@ -1,0 +1,158 @@
+UTStats
+Copyright (C) 2004/2005 azazel, )°DoE°(-AnthraX and toa
+
+This program is free software; you can redistribute and/or modify
+it under the terms of the Open Unreal Mod License.
+See license.txt for more information.
+
+========
+Contents
+========
+
+1. Installing the Server Actor
+2. Installing the web stuff (new install and upgrade)
+3. Importing Logs
+4. Known Bugs/Issues Still
+
+
+====================================
+1. UTStats Actor Install Information
+====================================
+
+From the System folder in the zip file, copy to your UTServer\System folder the
+following files:
+
+UTSAccuBeta4.u
+UTStatsBeta4.u
+
+Remove any previous entries for UTStats and UTSAccuBeta from [Engine.GameEngine]
+
+Add to [Engine.GameEngine] the following lines:
+ServerActors=UTStatsBeta4.UTStatsSA
+ServerPackages=UTSAccuBeta4
+
+Under the [Engine.GameInfo] check for:
+bLocalLog=True or bLocalLog=False
+
+This line HAS to be:
+bLocalLog=False
+
+Setting it to True will not give you complete logs (don't ask why it just won't).
+
+Log files are recorded to the UTServer\Logs folder.
+
+
+==================================
+2. UTStats Web Install Information
+==================================
+
+Note: If you already have the uts_country table from a previous version already 
+in your database do not wipe it.
+During the install instructions just ignore the bit that tells you to upload it.
+
+
+UPGRADING:
+Firstly we don't advise using any old logs, you will not benefit from any new 
+features AND it will likely mess up some page data.
+We apologise for not being able to save this information but there are a 
+massive amount of new features that are well worth ditching the old logs for :)
+
+If you do wish to keep the old logs you need to do a full install anyway, so 
+drop all the tables (except uts_ip2country) you had and remove all the 
+files/folders (making sure you don't delete the logs backups).
+When you edit config.php make sure to change the option:
+$import_incompatible_logs=false;
+to 
+$import_incompatible_logs=true;
+
+If you are wisely going to ditch the old logs just clear out your old install 
+and all the tables (except uts_ip2country) and start from here.
+
+
+FULL INSTALL:
+From the html folder in the zip file, upload all the files to your webserver 
+wherever you like.  I suggest under a folder called utstats.
+After the files have uploaded browse to the stats folder where you should see 
+the following folders:
+
+\images
+\import
+\includes
+\logs
+\pages
+
+Using whatever means (usually the ftp client) you need to CHMOD the logs folder 
+to 777.
+Now go into the logs folder.
+Now CHMOD the backups folder to 777.
+Also CHMOD the utdc folder to 777.
+
+Now go back a level and into the includes folder.
+CHMOD the file ftptimestamp.php to 777.
+Now edit the config.php file.
+
+Enter in your mysql database, hostname, username and password at the top.
+You must set an adminkey in here or you won't be able to import/use the admin 
+feature.
+Check all the other options to see if they are as you wish (they are set to 
+what we consider the best options).
+If you are going to use ftp transferring of log files amend the FTP connection 
+as required.
+
+Now import the contents of utstats.sql located under the sql folder into the 
+database you entered into the config.php.
+This will setup the following tables in your database:
+
+uts_games
+uts_gamestype
+uts_ip2country
+uts_killsmatrix
+uts_match
+uts_pinfo
+uts_player
+uts_rank
+uts_weapons
+uts_weaponstats
+
+When you try to import utstats it will not drop the tables for you, it will 
+just try to create them.
+If you already have them it will fail and its up to you to drop them tables.
+
+If you wish to use the country flags option you will need to install the sql 
+files uts_ip2country1.sql to uts_ip2country7.sql
+This MUST be done before you import your logs.
+
+
+
+=================
+3. Importing Logs
+=================
+
+Depending on the level of access you have and how competent you are you can do this 4 ways.
+*** Important *** 
+Make sure you edit config.php and set an adminkey at the top!
+
+Way 1:
+If you don't have ftp access to your UT server or allowed to use ftp via php then upload your 
+logs manually to the logs folder and then run the importer via the Import link.
+
+Way 2:
+If you have ftp access and can do ftp via php, edit the config.php file and input your UT servers ftp
+information into there.
+Now run the importer via the Import link.
+
+Way 3:
+Automate the process using a cron job or scheduled task.
+Just get this to run cd to the root of stats (where import.php is) and execute the import.php file
+with php.
+
+Way 4:
+Automate the web process using a web service cron job.
+
+
+====================
+6. Known Bugs/Issues
+====================
+
+If you find any bugs or issues please post them at our forums:
+http://www.unrealadmin.org/forums/forumdisplay.php?f=173
