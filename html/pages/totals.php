@@ -210,7 +210,7 @@ $formatstatlist = array(
 						'TTL' => 'minutes',
 						'Rank Points' => 'decimal',
 					);
-
+//*/
 echo'<br>
 <table border="0" cellpadding="1" cellspacing="2" width="550">
   <tbody>
@@ -227,31 +227,35 @@ echo'<br>
 
 foreach ($careerstatlist as $s_title => $s_formula)
 {
-	$sql_cstat = small_query("SELECT p.pid, pi.name, p.country, $s_formula AS stat, SUM(p.gametime) AS sumgametime, COUNT(p.matchid) AS mcount FROM uts_player AS p, uts_pinfo AS pi, uts_weaponstats AS ws WHERE ws.pid = pi.id AND p.pid = pi.id AND ws.matchid = 0 AND ws.weapon = 0 AND pi.banned <> 'Y' GROUP BY ws.pid HAVING sumgametime > 1800 AND stat > 0 ORDER BY stat DESC LIMIT 0,1");
+    $stat_high = small_query("SELECT @max := $s_formula AS x, SUM(p.gametime) AS sumgametime FROM uts_player AS p ,uts_weaponstats AS ws WHERE ws.pid = p.pid AND ws.matchid = 0 AND ws.weapon = 0 GROUP BY p.pid HAVING sumgametime > 1800 ORDER BY x DESC LIMIT 1");
+	$q_cstat = mysql_query("SELECT p.pid, pi.name, p.country, $s_formula AS stat, SUM(p.gametime) AS sumgametime, COUNT(p.matchid) AS mcount FROM uts_player AS p, uts_pinfo AS pi, uts_weaponstats AS ws WHERE ws.pid = pi.id AND p.pid = pi.id AND ws.matchid = 0 AND ws.weapon = 0 AND pi.banned <> 'Y' GROUP BY ws.pid HAVING sumgametime > 1800 AND stat > 0 AND stat = @max ORDER BY pi.name ASC");
 
-	if ($sql_cstat && $sql_cstat['stat'])
+    $nrows = mysql_num_rows($q_cstat);
+	if ($nrows > 0)
 	{
 		echo '  
 		<tr>
-			<td class="dark" align="center">'.$s_title.'</td>
-			<td class="grey" align="center">';
+			<td class="dark" align="center" rowspan="'.$nrows.'">'.$s_title.'</td>
+			<td class="grey" align="center" rowspan="'.$nrows.'">';
 		if ($formatstatlist[$s_title] == 'decimal')
-			echo get_dp($sql_cstat['stat']);
+			echo get_dp($stat_high['x']);
 		else if ($formatstatlist[$s_title] == 'minutes')
-			echo GetMinutes($sql_cstat['stat']);
+			echo GetMinutes($stat_high['x']);
 		else
-			echo $sql_cstat['stat'];
-		echo '</td>
+			echo $stat_high['x'];
+		echo '</td>';
+        while ($sql_cstat = mysql_fetch_array($q_cstat))
+        {
+            echo '
 			<td nowrap class="greyhuman" align="center"><a class="greyhuman" href="./?p=pinfo&amp;pid='.$sql_cstat['pid'].'">'.FlagImage($sql_cstat['country'], false).' '.$sql_cstat['name'].'</a></td>
 			<td class="grey" align="center">'.sec2hour($sql_cstat['sumgametime']).'</td>
 			<td class="grey" align="center">'.$sql_cstat['mcount'].'</td>
 		</tr>';
+        }
 	}
 }
 
-//run_query("CREATE OR REPLACE VIEW tmpV AS SELECT p.pid, p.country, SUM(frags) AS frags, SUM(gametime) AS sumgametime, COUNT(matchid) AS mcount FROM uts_player AS p GROUP BY pid HAVING sumgametime > 1800");
-//run_query("SELECT @max_frags := MAX(frags) from tmpV");
-/*
+/*/
 $sql_chighfrags = small_query("SELECT p.pid, pi.name, p.country, SUM(frags) AS frags , SUM(gametime) AS sumgametime, COUNT(matchid) AS mcount FROM uts_player AS p, uts_pinfo AS pi WHERE p.pid = pi.id AND pi.banned <> 'Y' GROUP BY pid HAVING sumgametime > 1800 ORDER BY frags DESC LIMIT 0,1");
 
 $sql_chighdeaths = small_query("SELECT p.pid, pi.name, p.country, SUM(deaths) AS deaths , SUM(gametime) AS sumgametime, COUNT(matchid) AS mcount FROM uts_player AS p, uts_pinfo AS pi WHERE p.pid = pi.id AND pi.banned <> 'Y' GROUP BY pid HAVING sumgametime > 1800 ORDER BY deaths DESC LIMIT 0,1");
@@ -456,7 +460,7 @@ if ($sql_chighrank and $sql_chighrank[rank]) {
     <td class="grey" align="center">'.$sql_chighrank[mcount].'</td>
   </tr>';
 }
-*/
+//*/
 echo '
 </tbody></table>
 <br>';
@@ -472,34 +476,39 @@ echo'<table border="0" cellpadding="1" cellspacing="2" width="500">
     <td class="smheading" align="center" width="200">Category</td>
     <td class="smheading" align="center" width="50">Amount</td>
     <td class="smheading" align="center" width="200">Player</td>
-    <td class="smheading" align="center" width="50">Match</td>
+    <td class="smheading" align="center" width="50">Matches</td>
   </tr>';
 
 
 foreach ($matchstatlist as $s_title => $s_formula)
 {
-	$sql_cstat = small_query("SELECT p.matchid, p.pid, pi.name, p.country, $s_formula AS stat, p.gametime AS sumgametime FROM uts_player AS p, uts_pinfo AS pi, uts_weaponstats AS ws WHERE ws.pid = pi.id AND p.pid = pi.id AND ws.matchid = p.matchid AND ws.weapon = 0 AND pi.banned <> 'Y' HAVING gametime > 60 AND stat > 0 ORDER BY stat DESC LIMIT 0,1");
+    $stat_high = small_query("SELECT @max := max($s_formula) AS x FROM uts_player as p LEFT JOIN uts_weaponstats AS ws ON (ws.pid = p.pid AND ws.matchid = p.matchid AND ws.weapon = 0)");
+	$q_cstat = mysql_query("SELECT COUNT(p.matchid) as times, p.pid, pi.name, p.country, MAX($s_formula) AS stat FROM uts_player AS p, uts_pinfo AS pi, uts_weaponstats AS ws WHERE ws.pid = pi.id AND p.pid = pi.id AND ws.matchid = p.matchid AND ws.weapon = 0 AND pi.banned <> 'Y' AND p.gametime > 60 AND $s_formula > 0 AND $s_formula = @max GROUP BY p.pid ORDER BY times DESC, pi.name ASC");
 
-	if ($sql_cstat && $sql_cstat['stat'])
+    $nrows = mysql_num_rows($q_cstat);
+	if ($nrows > 0)
 	{
 		echo '  
 		<tr>
-			<td class="dark" align="center">'.$s_title.'</td>
-			<td class="grey" align="center">';
-		if ($formatstatlist[$s_title] == 'decimal')
-			echo get_dp($sql_cstat['stat']);
-		else if ($formatstatlist[$s_title] == 'minutes')
-			echo GetMinutes($sql_cstat['stat']);
-		else
-			echo $sql_cstat['stat'];
-		echo '</td>
-			<td nowrap class="greyhuman" align="center"><a class="greyhuman" href="./?p=pinfo&amp;pid='.$sql_cstat['pid'].'">'.FlagImage($sql_cstat['country'], false).' '.$sql_cstat['name'].'</a></td>
-			<td class="grey" align="center"><a class="greyhuman" href="./?p=match&amp;mid='.$sql_cstat['matchid'].'">(click)</a></td>
-		</tr>';
+			<td class="dark" align="center" rowspan="'.$nrows.'">'.$s_title.'</td>
+            <td class="grey" align="center" rowspan="'.$nrows.'">';
+        if ($formatstatlist[$s_title] == 'decimal')
+            echo get_dp($stat_high['x']);
+        else if ($formatstatlist[$s_title] == 'minutes')
+            echo GetMinutes($stat_high['x']);
+        else
+            echo $stat_high['x'];
+        echo '</td>';
+        while ($sql_cstat = mysql_fetch_array($q_cstat))
+        {
+            echo '
+           <td nowrap class="greyhuman" align="center"><a class="greyhuman" href="./?p=pinfo&amp;pid='.$sql_cstat['pid'].'">'.FlagImage($sql_cstat['country'], false).' '.$sql_cstat['name'].'</a></td>
+            <td class="grey" align="center">'.$sql_cstat['times'].'</td>
+        </tr>';
+        }
 	}
 }
-
-/*
+/*/
 //$sql_mhighfrags = small_query("SELECT p.matchid, p.pid, pi.name, p.country, frags , gametime FROM uts_player AS p, uts_pinfo AS pi WHERE p.pid = pi.id AND pi.banned <> 'Y' AND frags > 0 AND gametime > 60 ORDER BY frags DESC LIMIT 0,1");
 
 run_query("SELECT @frags := MAX(frags) from uts_player");
@@ -720,7 +729,7 @@ if ($sql_mhighrank) {
     <td class="grey" align="center"><a class="greyhuman" href="./?p=match&amp;mid='.$sql_mhighrank[matchid].'">(click)</a></td>
   </tr>';
 }
-*/
+//*/
 
 // NGStats Style Weapon Highs (All Time)
 
@@ -734,8 +743,8 @@ echo '
   </tr>
   <tr>
     <td class="smheading" align="center" width="200">Category</td>
-    <td class="smheading" align="center" width="200">Player</td>
     <td class="smheading" align="center" width="50">Kills</td>
+    <td class="smheading" align="center" width="200">Player</td>
     <td class="smheading" align="center" width="50">Matches</td>
   </tr>
 ';
@@ -751,8 +760,8 @@ while ($r_mweapons = mysql_fetch_array($q_mweapons))
 	{
 	      echo '<tr>
 		    <td class="dark" align="center">'.$r_mweapons['name'].'</td>
-		    <td class="greyhuman" align="center"><a class="greyhuman" href="./?p=pinfo&amp;pid='.$r_mweaponsl['playerid'].'">'.FlagImage($r_mweaponsl['country'], false).' '.$r_mweaponsl['name'].'</a></td>
 		    <td class="grey" align="center">'.$r_mweaponsl['kills'].'</td>
+		    <td class="greyhuman" align="center"><a class="greyhuman" href="./?p=pinfo&amp;pid='.$r_mweaponsl['playerid'].'">'.FlagImage($r_mweaponsl['country'], false).' '.$r_mweaponsl['name'].'</a></td>
 		    <td class="grey" align="center">'.$r_mweaponsl['mcount'].'</td>
  		    </tr>';
 
@@ -771,8 +780,8 @@ echo '<table border="0" cellpadding="1" cellspacing="2" width="450">
   </tr>
   <tr>
     <td class="smheading" align="center" width="200">Category</td>
-    <td class="smheading" align="center" width="200">Player</td>
     <td class="smheading" align="center" width="50">Kills</td>
+    <td class="smheading" align="center" width="200">Player</td>
     <td class="smheading" align="center" width="50">Match</td>
   </tr>
 ';
@@ -788,8 +797,8 @@ while ($r_mweapons = mysql_fetch_array($q_mweapons))
 	{
 	      echo '<tr>
 		    <td class="dark" align="center">'.$r_mweapons['name'].'</td>
-		    <td class="greyhuman" align="center"><a class="greyhuman" href="./?p=pinfo&amp;pid='.$r_mweaponsl['playerid'].'">'.FlagImage($r_mweaponsl['country'], false).' '.$r_mweaponsl['name'].'</a></td>
 		    <td class="grey" align="center">'.$r_mweaponsl['kills'].'</td>
+		    <td class="greyhuman" align="center"><a class="greyhuman" href="./?p=pinfo&amp;pid='.$r_mweaponsl['playerid'].'">'.FlagImage($r_mweaponsl['country'], false).' '.$r_mweaponsl['name'].'</a></td>
 		    <td class="grey" align="center"><a class="greyhuman" href="./?p=match&amp;mid='.$r_mweaponsl['matchid'].'">(click)</a></td>
  		    </tr>';
 	}

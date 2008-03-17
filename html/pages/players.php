@@ -85,7 +85,7 @@ echo'
   </tr>
   <tr>
     <td class="smheading" align="center" width="150"><a class="smheading" href="./?p=players&amp;filter=name&amp;sort='.InvertSort('name', $filter, $sort).'">Player Name</a>'.SortPic('name', $filter, $sort).'</td>
-    <td class="smheading" align="center" width="45"><a class="smheading" href="./?p=players&amp;filter=games&amp;sort='.InvertSort('games', $filter, $sort).'">Matches</a>'.SortPic('games', $filter, $sort).'</td>
+    <td class="smheading" align="center" width="45"><a class="smheading" href="./?p=players&amp;filter=matches&amp;sort='.InvertSort('matches', $filter, $sort).'">Matches</a>'.SortPic('matches', $filter, $sort).'</td>
     <td class="smheading" align="center" width="50"><a class="smheading" href="./?p=players&amp;filter=gamescore&amp;sort='.InvertSort('gamescore', $filter, $sort).'">Score</a>'.SortPic('gamescore', $filter, $sort).'</td>
     <td class="smheading" align="center" width="50"><a class="smheading" href="./?p=players&amp;filter=frags&amp;sort='.InvertSort('frags', $filter, $sort).'">Frags</a>'.SortPic('frags', $filter, $sort).'</td>
     <td class="smheading" align="center" width="50"><a class="smheading" href="./?p=players&amp;filter=kills&amp;sort='.InvertSort('kills', $filter, $sort).'">Kills</a>'.SortPic('kills', $filter, $sort).'</td>
@@ -100,32 +100,10 @@ echo'
     <td class="smheading" align="center" width="45"><a class="smheading" href="./?p=players&amp;filter=gametime&amp;sort='.InvertSort('gametime', $filter, $sort).'">Hours</a>'.SortPic('gametime', $filter, $sort).'</td>
   </tr>';
 
-$sql_plist = "SELECT	pi.name AS name,
-						pi.country AS country,
-						p.pid, COUNT(p.id) AS games,
-						SUM(p.gamescore) as gamescore,
-						SUM(p.frags) AS frags,
-						SUM(p.kills) AS kills,
-						SUM(p.deaths) AS deaths,
-						SUM(p.suicides) as suicides,
-						(100*SUM(p.kills)/(SUM(p.kills)+SUM(p.deaths)+SUM(p.suicides)+SUM(p.teamkills))) AS eff,
-						ws.acc AS accuracy,
-						(SUM(p.gametime)/(SUM(p.deaths)+SUM(p.suicides)+COUNT(p.id))) AS ttl,
-						SUM(p.gametime) as gametime,
-						(SUM(p.frags)/SUM(p.gametime)*3600) AS fph,
-						SUM(p.headshots) AS headshots,
-						SUM(p.teamkills) AS teamkills
-				FROM	uts_player AS p,
-						uts_pinfo AS pi,
-						uts_weaponstats AS ws
-				WHERE	p.pid = pi.id
-					AND	p.pid = ws.pid
-					AND	pi.banned <> 'Y'
-					AND	ws.matchid = 0
-					AND	ws.weapon = 0
-				GROUP BY p.pid
-				ORDER BY $filter $sort
-				LIMIT $qpage,50";
+$sql_plist = "SELECT    *
+                FROM    uts_career
+				ORDER BY    $filter $sort
+				LIMIT   $qpage,50";
 
 $q_plist = mysql_query($sql_plist) or die(mysql_error());
 while ($r_plist = mysql_fetch_array($q_plist))
@@ -135,13 +113,12 @@ while ($r_plist = mysql_fetch_array($q_plist))
 	  $eff = get_dp($r_plist['eff']);
 	  $acc = get_dp($r_plist['accuracy']);
 	  $ttl = GetMinutes($r_plist['ttl']);
-	  $r_pname = $r_plist['name'];
 	  $myurl = urlencode($r_pname);
 
 	  echo'
 	  <tr>
-		<td nowrap class="dark" align="left"><a class="darkhuman" href="./?p=pinfo&amp;pid='.$r_plist['pid'].'">'.FormatPlayerName($r_plist['country'], $r_plist['pid'], $r_pname).'</a></td>
-		<td class="grey" align="center">'.$r_plist['games'].'</td>
+		<td nowrap class="dark" align="left"><a class="darkhuman" href="./?p=pinfo&amp;pid='.$r_plist['id'].'">'.FormatPlayerName($r_plist['country'], $r_plist['id'], $r_plist['name']).'</a></td>
+		<td class="grey" align="center">'.$r_plist['matches'].'</td>
 		<td class="grey" align="center">'.$r_plist['gamescore'].'</td>
 		<td class="grey" align="center">'.$r_plist['frags'].'</td>
 		<td class="grey" align="center">'.$r_plist['kills'].'</td>

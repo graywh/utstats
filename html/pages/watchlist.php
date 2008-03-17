@@ -56,26 +56,9 @@ foreach($watchlist as $pid)
 					ORDER BY	m.time DESC
 					LIMIT	0,1";
 						
-	$sql_pinfo = "	SELECT	COUNT(p.id) AS games, 
-							SUM(p.gamescore) AS gamescore, 
-							SUM(p.frags) AS frags, 
-							SUM(p.kills) AS kills,
-							SUM(p.deaths) AS deaths, 
-							SUM(p.suicides) AS suicides,
-							SUM(p.teamkills) AS teamkills,
-							SUM(p.headshots) AS headshots,
-							ws.acc as accuracy,
-							(SUM(p.frags)/SUM(p.gametime)*3600) AS fph,
-							(100*SUM(p.kills)/(SUM(p.kills)+SUM(p.deaths)+SUM(p.suicides)+SUM(p.teamkills))) AS eff,
-							(SUM(p.gametime)/(SUM(p.deaths)+SUM(p.suicides)+COUNT(p.id))) AS ttl,
-							SUM(p.gametime) AS gametime
-					FROM 	uts_player AS p,
-							uts_weaponstats AS ws
-					WHERE 	p.pid = '$pid'
-						AND	p.pid = ws.pid
-						AND ws.matchid = 0
-						AND	ws.weapon = 0
-					GROUP BY p.pid";
+	$sql_pinfo = "	SELECT	*
+                        FROM uts_career
+                        WHERE id = '$pid'";
 
 	$r_pinfo = small_query($sql_pinfo);
 						
@@ -100,7 +83,7 @@ foreach($watchlist as $pid)
 		echo '</a></td>';
 		
 		echo '
-		<td class="'.$class.'" align="center">'.$r_pinfo['games'].'</td>
+		<td class="'.$class.'" align="center">'.$r_pinfo['matches'].'</td>
 		<td class="'.$class.'" align="center">'.$r_pinfo['gamescore'].'</td>
 		<td class="'.$class.'" align="center">'.$r_pinfo['frags'].'</td>
 		<td class="'.$class.'" align="center">'.$r_pinfo['kills'].'</td>

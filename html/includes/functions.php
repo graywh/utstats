@@ -117,7 +117,6 @@ function run_query($query) {
 
 // Small query
 function small_query($query) {
-	//echo($query);
 	$sql_small = "$query";
 	$q_small = mysql_query($sql_small) or die(mysql_error());
 	$r_small = mysql_fetch_array($q_small);
