@@ -1,6 +1,6 @@
 <?
 // Database connection details
-$dbname = "utstats";
+$dbname = "utstats_dev";
 $hostname = "localhost";
 #$hostname = "127.0.0.1";
 $uname = "utserver";
@@ -16,7 +16,7 @@ $import_adminkey = '114m4';
 // The absolute path to UTStats's home directory.
 // Only needed if you're starting the importer from another directory
 // Leave emtpy if unsure
-$import_homedir = '/home/biostat/ut/utstats_beta40/html/';
+$import_homedir = '/home/graywh/src/php/utstats/html/';
 
 // Use the MySQL temporary tables feature?
 // Available since MySQL 3.23 - requires CREATE TEMPORARY TABLE privilege since 4.0.2
