@@ -9,6 +9,19 @@ $queryport = $serverport+1;
 //If there is no IP, return (exit)
 if (strlen($serverip) == 0) return;
 
+//Various functions:
+		function  GetColorValue($teamid)
+        {
+			$retval = "#DBDBDB";
+			$colors = array("#FF4949","#126BFF","#90FF87","#FEFF91","N/A"=>"#DBDBDB");
+			
+			if ($teamid < 4) $retval = $colors[$teamid];
+
+			//Return value
+			return $retval;	
+		}
+//End functions
+
 //Open UDP socket to server
 $sock = fsockopen("udp://" . $serverip, $queryport, $errno, $errstr,4);
 
@@ -27,8 +40,8 @@ $data = "";
 $starttime = Time();
 
 //Loop until final packet has been received.
-while(!($gotfinal == True || feof($sock))) {
-
+while(!($gotfinal == True || feof($sock)))
+{
 	//Get data
 	if(($buf = fgetc($sock)) == FALSE) {
 		usleep(100); // wait for additional data? :S whatever
@@ -58,15 +71,15 @@ $chunks = split('[\]', $data);
 
 $mappic = strtolower("images/maps/".$map.".jpg");
 
-if (file_exists($mappic)) {
-} else {
+if (!file_exists($mappic))
+{
    $mappic = ("images/maps/blank.jpg");
 }
 
 $mapname = getiteminfo("mapname",$chunks);
 $mappic = strtolower("images/maps/".$mapname.".jpg");
-IF (file_exists($mappic)) {
-	} else {
+if (!file_exists($mappic))
+{
 	$mappic = "images/maps/blank.jpg";
 }
 
@@ -92,6 +105,13 @@ $r_tournament = getiteminfo("tournament",$chunks);
 $r_friendlyfire = getiteminfo("friendlyfire",$chunks);
 $r_gamestyle = getiteminfo("gamestyle",$chunks);
 
+$r_mutators = getiteminfo("mutators",$chunks);
+
+if ($r_gametype == DeathMatchPlus || $r_gametype == LastManStanding)
+    $teams="Skin Colour"; 
+else
+    $teams="Team";
+
 echo'
 <table border="0" cellpadding="1" cellspacing="2" width="720">
   <tbody><tr>
@@ -100,11 +120,11 @@ echo'
   <tr>
     <td class="dark" align="center" width="110">Server IP</td>
     <td class="grey" align="center" width="350"><a class="grey" href="unreal://'.$serverip.':'.$serverport.'">'.$serverip.':'.$serverport.'</a></td>
-    <td class="dark" align="center" rowspan="5" colspan="2"><img border="0" alt="'.$mapname.'" title="'.$mapname.'" src="'.$mappic.'"></td>
+    <td class="dark" align="center" rowspan="6" colspan="2"><img border="0" height="256" width="256" alt="'.$mapname.'" title="'.$mapname.'" src="'.$mappic.'"></td>
   </tr>
   <tr>
     <td class="dark" align="center">Map Name</td>
-    <td class="grey" align="center">'.$mapname.'</td>
+    <td class="grey" align="center">'.$mapname.' <a href="./?p=minfo&amp;map='.$mapname.'"><b>View Stats</b></a></td>
   </tr>
   <tr>
     <td class="dark" align="center" width="110">Match Type</td>
@@ -131,6 +151,10 @@ echo'
     Password Required: '.$r_password.'<br />
 	</td>
   </tr>
+  <tr>
+    <td class="dark" align="center">Mutators</td>
+    <td class="grey" align="center">'.$r_mutators.'</td>
+  </tr>
 </tbody></table>
 <br>
 
@@ -142,28 +166,52 @@ echo'
   <tr>
     <td class="smheading" align="center" width="270">Player</td>
     <td class="smheading" align="center">Frags</td>
-    <td class="smheading" align="center">Team</td>
+    <td class="smheading" align="center">'.$teams.'</td>
     <td class="smheading" align="center">Ping</td>
     <td class="smheading" align="center">Health</td>
   </tr>';
 
 //Loop through all players
-for ($i = 0; $i < $r_numplayers; $i++) {
+for ($i = 0; $i < $r_numplayers; $i++)
+{
 	$actualid = $i;
 	$itemx = $i+1;
 
+                                    if(getiteminfo("Team_" . $actualid,$chunks) == $retval)
+										$TeamColorName="N/A";
+									else if(getiteminfo("team_" . $actualid,$chunks) == 0)
+										$TeamColorName="Red";
+									else if(getiteminfo("team_" . $actualid,$chunks) == 1)
+										$TeamColorName="Blue";
+									else if(getiteminfo("team_" . $actualid,$chunks) == 2)
+										$TeamColorName="Green";
+									else if(getiteminfo("team_" . $actualid,$chunks) == 3)
+										$TeamColorName="Gold";
+									else if(($r_gametype == DeathMatchPlus) && (getiteminfo("team_" . $actualid,$chunks) == 255))
+										$TeamColorName="Grey";
+									else if(($r_gametype == LastManStanding) && (getiteminfo("team_" . $actualid,$chunks) == 255))
+										$TeamColorName="Grey";
+									else if(getiteminfo("team_" . $actualid,$chunks) == 255)
+										$TeamColorName="Spectator";
+									else
+										$TeamColorName="N/A";
+									{
+									$rowcolor = GetColorValue(getiteminfo("team_" . $actualid,$chunks));
+									}
+
 	$r_playername = getiteminfo("player_" . $actualid,$chunks);
 	$r_playerfrags = getiteminfo("frags_" . $actualid,$chunks);
-	$r_playerteam = getiteminfo("team_" . $actualid,$chunks);
+	$r_playerteam = $TeamColorName;
 	$r_playerping = getiteminfo("ping_" . $actualid,$chunks);
 	$r_playerhealth = getiteminfo("Health_" . $itemx,$chunks);
+	$r_rowcolors = $rowcolor;
 
 	echo'<tr>
-		<td class="grey" align="center">'.$r_playername.'</td>
-		<td class="grey" align="center">'.$r_playerfrags.'</td>
-		<td class="grey" align="center">'.$r_playerteam.'</td>
-		<td class="grey" align="center">'.$r_playerping.'</td>
-		<td class="grey" align="center">'.$r_playerhealth.'</td>
+		<td class="greystatus" bgcolor="'.$r_rowcolors.'" align="center">'.$r_playername.'</td>
+		<td class="greystatus" bgcolor="'.$r_rowcolors.'" align="center">'.$r_playerfrags.'</td>
+		<td class="greystatus" bgcolor="'.$r_rowcolors.'" align="center">'.$r_playerteam.'</td>
+		<td class="greystatus" bgcolor="'.$r_rowcolors.'" align="center">'.$r_playerping.'</td>
+		<td class="greystatus" bgcolor="'.$r_rowcolors.'" align="center">'.$r_playerhealth.'</td>
 	  </tr>';
 }
 
