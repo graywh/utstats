@@ -131,6 +131,9 @@
 	$r_ttl = get_dp($q_ttl[col4]);
 	$r_score = $q_score[col4];
 
+  // Get "real" TTL
+  $r_ttl = $r_tos / ($r_deaths + $r_suicides + 1);
+
 	// Generate player record
 	$sql_playerid = "	INSERT 
 							INTO	uts_player 
