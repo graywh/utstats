@@ -21,6 +21,43 @@ All original pages are W3C <a href="http://validator.w3.org/check?uri=referer" t
 <p><a name="changelog"></a><b>Change Log</b></p>
 <blockquote><p>
 <dl>
+	<dt>beta 4.2.3</dt>
+	<dd>Bug Fixes:<br>
+	Lots of bug fixes/database corrections (By Enakin)
+	
+	<dt>beta 4.2.2</dt>
+	<dd>Added:<br>
+	Option to import AnthChecker logs (admin viewable only) (Added by Skillz)<br>
+	New player merger page for admins(Added by killereye)<br><br></dd>
+	<dd>Bug Fixes:<br>
+	UT Stats DOM fix (Edited by killereye)<br><br></dd>
+	<dt>beta 4.2</dt>
+	<dd>Added:<br>
+    Ranking re-calculation option added to admin section<br>
+    Import and display player pings<br>
+    <i>Explain Ranking</i> page<br>
+    Added an option to the admin page to delete temporary tables (if any)<br><br></dd>
+
+	<dd>Bug Fixes:<br>
+	Import fix for MySQL v3.x<br>
+    Partial Import delete fix<br>
+    bbcode and Clanbase Report Fix - not showing high score win reports.<br>
+    Ranking fix (was more than 300 mins to get full ranking points)<br>
+    Spectator fix (was logging players as spectators)<br>
+    Efficiency on Players Total worked out as SUM rather than AVG<br>
+   	Clanbase report fixed<br>
+    Totals on Totals Page fixed<br>
+    Events on Totals Page only show if they really happened<br>
+    Number of matches on Totals Page fixed<br>
+    Fixed a crash when trying to import logs that didnt contain IP records<br>
+    Maps sometimes appeared twice on the maps list / incorrect map statistics<br>
+    First/Prev/Next/Last links on map stas page were not working correctly<br>
+    Improved server actor version uploaded (old one may have caused some server lag at times)<br>
+    Updated import.php for new server actor<br>
+    Few actor fixes<br>
+    Weapon stats for second attacking team in assault games were not correct (reported by wgray8231)<br>
+    Delete player from match didnt correctly remove the player from the match (reported by wgray8231)<br><br></dd>
+
 	<dt>beta 4.0</dt>
 	<dd>Added:<br>
 	Many pages overhauled<br>

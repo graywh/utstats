@@ -1,22 +1,21 @@
 <?
 // Database connection details
-$dbname = "utstats_dev";
-$hostname = "localhost";
-#$hostname = "127.0.0.1";
-$uname = "utserver";
-$upass = "utstats";
+$dbname = "";
+$hostname = "";
+$uname = "";
+$upass = "";
 
-$dbconnect = mysql_pconnect($hostname,$uname,$upass);
+$dbconnect = mysql_connect($hostname,$uname,$upass);
 $dbconnect2 = mysql_select_db($dbname);
 
 // The key needed to run the import script
-$import_adminkey = '114m4';
+$import_adminkey = '';
 
 // When runnning from the command-line (cron jobs):
 // The absolute path to UTStats's home directory.
 // Only needed if you're starting the importer from another directory
 // Leave emtpy if unsure
-$import_homedir = '/home/graywh/src/php/utstats/html/';
+$import_homedir = '';
 
 // Use the MySQL temporary tables feature?
 // Available since MySQL 3.23 - requires CREATE TEMPORARY TABLE privilege since 4.0.2
@@ -53,7 +52,7 @@ $import_log_backups_purge_after = 0;
 $import_reload_after = 22;
 
 // Ignore bots and bot kills/deaths?
-$import_ignore_bots = false;
+$import_ignore_bots = true;
 
 // How to deal with banned players?
 // 1 - (recommended) import the player and display him/her on matchpages (without values :D)
@@ -89,22 +88,6 @@ $import_utdc_log_compress = "compress";
 // Purge old UTDC logs after x days. 0 to disable.
 $import_utdc_log_purge_after = 0;
 
-// UTStats can download and manage your AnthChecker logs
-// Enable downloading of AC logs?
-$import_ac_download_enable = true;
-
-// Log files start with...
-$import_ac_log_start = "[AC]";
-
-// Log files end with...
-$import_ac_log_extension = ".log";
-
-// Compress AnthChecker logfiles after download? [compress/gzip/no]
-// (see $import_log_backup for available options)
-$import_ac_log_compress = "compress";
-
-// Purge old AnthChecker logs after x days. 0 to disable.
-$import_ac_log_purge_after = 0;
 
 // Enable the creation of pictures? (Signature pictures for users where they can see their current ranking and stuff)
 // Requires GD- and FreeType support.

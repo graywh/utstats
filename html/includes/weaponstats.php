@@ -54,7 +54,6 @@ function weaponstats($_mid, $_pid, $title = 'Weapons Summary') {
 							GROUP BY	ws.pid,
 										ws.weapon";
 	}
-
 	$q_weapons = mysql_query($sql_weapons) or die(mysql_error());
 	while ($r_weapons = zero_out(mysql_fetch_array($q_weapons))) {
 		$weaponid = intval($r_weapons[weaponid]);

@@ -3,7 +3,7 @@ function teamstats($mid, $title, $extra = NULL, $extratitle = NULL, $order = 'ga
 	global $gamename, $gid;
 	$r_info = small_query("SELECT teamgame, t0score, t1score, t2score, t3score FROM uts_match WHERE id = '$mid'");
 	if (!$r_info) die("Match not found");
-	$teams = ($r_info['teamgame'] == 'True') ? true : false;
+	$teams = ($r_info[teamgame] == 'True') ? true : false;
 	$teamscore[-1] = 0;
 	$teamscore[0] = $r_info[t0score];
 	$teamscore[1] = $r_info[t1score];
@@ -32,11 +32,13 @@ function teamstats($mid, $title, $extra = NULL, $extratitle = NULL, $order = 'ga
 	$header = true;
 	teamstats_init_totals($totals, $num);
 	while ($r_players = zero_out(mysql_fetch_array($q_players))) {
+		$r_players[dom_cp] = $r_players[gamescore] - $r_players[frags];
+		
 		$r_players[team] = intval($r_players[team]);
 		if ($teams and $oldteam != $r_players[team]) {
 			if ($r_players[team] != 0) teamstats_team_totals($totals, $num, $teams, $extra, $teamscore[$oldteam]);
 			$oldteam = $r_players[team];
-			teamstats_init_totals($totals, $num);
+			teamstats_init_totals($totals, $num, $extra);
 
 			switch(intval($r_players[team])) {
 				case 0:	$teamname = 'Red'; break;
@@ -85,7 +87,7 @@ function teamstats($mid, $title, $extra = NULL, $extratitle = NULL, $order = 'ga
 		$totals[teamkills] += $r_players[teamkills];
 		$totals[eff] += $r_players[eff];
 		$totals[acc] += $r_players[accuracy];
-		$totals[time] += $r_players[gametime];
+		$totals[ttl] += $r_players[gametime];
 		$num++;
 		
 		if ($r_players[banned] == 'Y') {
@@ -107,7 +109,7 @@ function teamstats($mid, $title, $extra = NULL, $extratitle = NULL, $order = 'ga
 
 		$class = ($num % 2) ? 'grey' : 'grey2';
 		echo '<tr>';
-		if ($r_players['banned'] != 'Y') {
+		if ($r_players[banned] != 'Y') {
 			echo '<td nowrap class="darkhuman" align="left"><a class="darkhuman" href="./?p=matchp&amp;mid='.$mid.'&amp;pid='.$r_players[pid].'">'.FormatPlayerName($r_players[country], $r_players[pid], $r_players[name], $gid, $gamename, true, $r_players[rank]).'</a></td>';
 		} else {
 			echo '<td nowrap class="darkhuman" align="left"><span style="text-decoration: line-through;">'.FormatPlayerName($r_players[country], $r_players[pid], $r_players[name], $gid, $gamename, true, $r_players[rank]).'</span></td>';
@@ -135,9 +137,9 @@ function teamstats($mid, $title, $extra = NULL, $extratitle = NULL, $order = 'ga
 
 }
 
-function teamstats_init_totals(&$totals, &$num) {
+function teamstats_init_totals(&$totals, &$num, $extra = null) {
 	$totals[gamescore] = 0;
-	$totals[extra] = 0;
+	if ($extra) $totals[$extra] = 0;
 	$totals[frags] = 0;
 	$totals[kills] = 0;
 	$totals[deaths] = 0;
@@ -145,7 +147,7 @@ function teamstats_init_totals(&$totals, &$num) {
 	$totals[teamkills] = 0;
 	$totals[eff] = 0;
 	$totals[acc] = 0;
-	$totals[time] = 0;
+	$totals[ttl] = 0;
 	$num = 0;
 }
 
@@ -153,9 +155,9 @@ function teamstats_team_totals(&$totals, $num, $teams, $extra, $teamscore) {
 	if ($num == 0) $num = 1;
 	$eff = get_dp($totals[eff] / $num);
 	$acc = get_dp($totals[acc] / $num);
-	$ttl = GetMinutes($totals[time] / ($totals[deaths] + $totals[suicides] + $num));
-	$time = GetMinutes($totals[time]);
-	$fph = get_dp($totals[frags] / $totals[time] * 3600);
+	$ttl = GetMinutes($totals[ttl] / ($totals[deaths] + $totals[suicides] + $num));
+	$time = GetMinutes($totals[ttl]);
+	$fph = get_dp($totals[frags] / $totals[ttl] * 3600);
 
 
 	echo '<tr>';

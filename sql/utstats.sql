@@ -40,6 +40,16 @@ CREATE TABLE `uts_gamestype` (
 
 -- --------------------------------------------------------
 
+--
+-- Table structure for table `uts_ignoreips`
+--
+
+CREATE TABLE IF NOT EXISTS `uts_ignoreips` (
+  `ip` bigint(15) NOT NULL default '0',
+  PRIMARY KEY  (`ip`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+-- --------------------------------------------------------
+
 -- 
 -- Table structure for table `uts_ip2country`
 -- 
@@ -134,17 +144,17 @@ CREATE TABLE `uts_player` (
   `insta` tinyint(1) NOT NULL default '0',
   `playerid` tinyint(3) NOT NULL default '0',
   `pid` int(10) unsigned NOT NULL default '0',
-  `team` tinyint(2) NOT NULL default '0',
+  `team` tinyint(2) unsigned NOT NULL default '0',
   `isabot` tinyint(1) NOT NULL default '0',
   `country` char(2) NOT NULL default '',
   `ip` int(10) unsigned NOT NULL default '0',
   `gid` tinyint(3) unsigned NOT NULL default '0',
   `gametime` float NOT NULL default '0',
-  `gamescore` smallint(5) unsigned NOT NULL default '0',
+  `gamescore` smallint(5) NOT NULL default '0',
   `lowping` smallint(5) unsigned NOT NULL default '0',
   `highping` smallint(5) unsigned NOT NULL default '0',
   `avgping` smallint(5) unsigned NOT NULL default '0',
-  `frags` smallint(5) unsigned NOT NULL default '0',
+  `frags` smallint(5) NOT NULL default '0',
   `deaths` smallint(5) unsigned NOT NULL default '0',
   `kills` smallint(5) unsigned NOT NULL default '0',
   `suicides` smallint(5) unsigned NOT NULL default '0',

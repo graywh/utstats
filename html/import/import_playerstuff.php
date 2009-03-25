@@ -84,7 +84,7 @@
 	$r_player9 = small_query("SELECT MIN(col4 * 1) AS lowping, MAX(col4 * 1) AS highping, AVG(col4 * 1) AS avgping FROM uts_temp_$uid WHERE col1 = 'Player' AND col2 = 'Ping' AND col3 = $playerid AND col4 > 0");
 	$lowping = $r_player9[lowping];
 	$highping = $r_player9[highping];
-	$avgping = $r_player9[avgping];
+	$avgping = (int)$r_player9[avgping];
 
 	// People who join at the end error the import, this stops it
 	IF ($lowping == NULL) { $lowping = 0; }

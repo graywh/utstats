@@ -22,14 +22,15 @@ Contents
 From the System folder in the zip file, copy to your UTServer\System folder the
 following files:
 
-UTSAccuBeta4.u
-UTStatsBeta4.u
+UTSAccuBeta4_2.u
+UTStatsBeta4_2.u
 
 Remove any previous entries for UTStats and UTSAccuBeta from [Engine.GameEngine]
 
 Add to [Engine.GameEngine] the following lines:
-ServerActors=UTStatsBeta4.UTStatsSA
-ServerPackages=UTSAccuBeta4
+
+ServerPackages=UTSAccuBeta4_2
+ServerActors=UTStatsBeta4_2.UTStatsSA
 
 Under the [Engine.GameInfo] check for:
 bLocalLog=True or bLocalLog=False
@@ -85,7 +86,8 @@ Using whatever means (usually the ftp client) you need to CHMOD the logs folder
 to 777.
 Now go into the logs folder.
 Now CHMOD the backups folder to 777.
-Also CHMOD the utdc folder to 777.
+Then CHMOD the utdc folder to 777.
+Also CHMOD the ac folder to 777.
 
 Now go back a level and into the includes folder.
 CHMOD the file ftptimestamp.php to 777.
@@ -105,6 +107,7 @@ This will setup the following tables in your database:
 
 uts_games
 uts_gamestype
+uts_ignoreips
 uts_ip2country
 uts_killsmatrix
 uts_match
@@ -148,7 +151,6 @@ with php.
 
 Way 4:
 Automate the web process using a web service cron job.
-
 
 ====================
 6. Known Bugs/Issues

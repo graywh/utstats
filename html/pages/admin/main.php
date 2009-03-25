@@ -78,6 +78,7 @@ echo '
 	<ul>';
 		echo '<li><a href="admin.php?key='. urlencode($adminkey) .'&amp;action=mplayers">Merge Players</a></li>';
 		echo '<li><a href="admin.php?key='. urlencode($adminkey) .'&amp;action=mservers">Merge Servers</a></li>';
+		echo '<li><a href="admin.php?key='. urlencode($adminkey) .'&amp;action=plm">Merge IPs with more than 1 Player</a></li>';
 		echo '<br>';
 		echo '<li><a href="admin.php?key='. urlencode($adminkey) .'&amp;action=dmatch">Delete Match</a></li>';
 		echo '<li><a href="admin.php?key='. urlencode($adminkey) .'&amp;action=dpmatch">Delete Player From Match</a></li>';
@@ -90,6 +91,9 @@ echo '
 		echo '<li><a href="admin.php?key='. urlencode($adminkey) .'&amp;action=ipsearch">Search IP</a></li>';
 		if ($import_utdc_download_enable) {
 			echo '<li><a href="admin.php?key='. urlencode($adminkey) .'&amp;action=utdclog">View UTDC logs</a></li>';
+		}
+		if ($import_ac_download_enable) {
+			echo '<li><a href="admin.php?key='. urlencode($adminkey) .'&amp;action=aclog">View AnthChecker logs</a></li>';
 		}
 		echo '<br>';
 		echo '<li><a href="admin.php?key='. urlencode($adminkey) .'&amp;action=editweapons">Edit Weapons</a></li>';
