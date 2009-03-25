@@ -21,6 +21,10 @@ All original pages are W3C <a href="http://validator.w3.org/check?uri=referer" t
 <p><a name="changelog"></a><b>Change Log</b></p>
 <blockquote><p>
 <dl>
+	<dt>beta 4.2.3</dt>
+	<dd>Bug Fixes:<br>
+	Lots of bug fixes/database corrections (By Enakin)
+	
 	<dt>beta 4.2.2</dt>
 	<dd>Added:<br>
 	Option to import AnthChecker logs (admin viewable only) (Added by Skillz)<br>
