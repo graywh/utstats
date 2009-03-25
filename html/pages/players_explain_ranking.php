@@ -8,7 +8,7 @@ function row($name = NULL, $amount = 0, $multiplier = 0, $extra_multiplier = tru
 	}
 	$i++;
 	$class = ($i%2) ? 'grey' : 'grey2';
-	if ($extra_multiplier) $multiplier *= 60;
+	if ($extra_multiplier) $multiplier *= 600;
 	$points = $amount * $multiplier;
 	
 	$d_points = get_dp($points);
@@ -98,14 +98,14 @@ $t_points += row('Teamkills', $r_cnt['teamkills'], -2);
 row();
 $t_points += row('Flag Takes', $r_cnt['flag_taken'], 1);
 $t_points += row('Flag Pickups', $r_cnt['flag_pickedup'], 1);
-$t_points += row('Flag Returns', $r_cnt['flag_return'], 5);
+$t_points += row('Flag Returns', $r_cnt['flag_return'], 1);
 $t_points += row('Flag Captures', $r_cnt['flag_capture'], 10);
 $t_points += row('Flag Covers', $r_cnt['flag_cover'], 3);
 $t_points += row('Flag Seals', $r_cnt['flag_seal'], 2);
 $t_points += row('Flag Assists', $r_cnt['flag_assist'], 5);
-$t_points += row('Flag Kills', $r_cnt['flag_kill'], 3);
+$t_points += row('Flag Kills', $r_cnt['flag_kill'], 2);
 row();
-$t_points += row('Controlpoint Captures', $r_cnt['dom_cp'], 1);
+$t_points += row('Controlpoint Captures', $r_cnt['dom_cp'], 10);
 if (strpos($real_gamename, 'Assault') !== false) {
 	$t_points += row('Assault Objectives', $r_cnt['ass_obj'], 10);
 } else {
@@ -121,8 +121,8 @@ $t_points += row('Double Kills', $r_cnt['spree_double'], 1);
 $t_points += row('Multi Kills', $r_cnt['spree_multi'], 1);
 $t_points += row('Ultra Kills', $r_cnt['spree_ultra'], 1);
 $t_points += row('Monster Kills', $r_cnt['spree_monster'], 2);
-row();
 $t_points += row('Killing Sprees', $r_cnt['spree_kill'], 1);
+row();
 $t_points += row('Rampages', $r_cnt['spree_rampage'], 1);
 $t_points += row('Dominatings', $r_cnt['spree_dom'], 1.5);
 $t_points += row('Unstoppables', $r_cnt['spree_uns'], 2);
@@ -143,8 +143,7 @@ echo '<tr>	<td class="dark">Divided by game minutes</td>
 				<td class="grey2" align="center"></td>
 				<td class="grey2" align="right">'. get_dp($t_points) .'</td>
 		</tr>';
-
-/*
+		
 IF ($gametime < 10) {
 	$t_points += row('Penalty for playing < 10 minutes', get_dp($t_points), 0, false);
 }
@@ -164,7 +163,6 @@ IF ($gametime >= 100 && $gametime < 200) {
 IF ($gametime >= 200 && $gametime < 300) {
 	$t_points += row('Penalty for playing < 300 minutes', get_dp($t_points), -0.15, false);
 }
-*/
 row();	
 echo '<tr>	<td class="darkgrey"><strong>Total</strong></td>
 				<td class="darkgrey" align="center"></td>

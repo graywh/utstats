@@ -5,7 +5,7 @@ include('includes/weaponstats.php');
 weaponstats($mid, 0, 'Weapons Summary - '.$ass_att.' Attacking');
 
 IF($mid2 != NULL) {
-	weaponstats($mid, 0, 'Weapons Summary - '.$ass_att2.' Attacking');
+	weaponstats($mid2, 0, 'Weapons Summary - '.$ass_att2.' Attacking');
 }
 
 echo'

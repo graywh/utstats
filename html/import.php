@@ -160,6 +160,30 @@ while (false !== ($filename = readdir($logdir)))
 			continue;
 	}
 
+	// AnthChecker log: Move to logs/ac/
+	if		($import_ac_download_enable
+		and substr($filename, strlen($filename) - strlen($import_ac_log_extension)) == $import_ac_log_extension
+		and substr($oldfilename, 0, strlen($import_ac_log_start)) == $import_ac_log_start) {
+			if ($import_ac_log_compress == 'no') $import_ac_log_compress = 'yes';
+			if ($html) {
+				echo'<table class="box" border="0" cellpadding="1" cellspacing="2">
+				<tr>
+					<td class="smheading" align="center" height="25" width="550" colspan="2">AC log: '.$oldfilename.'</td>
+				</tr>
+				<tr>
+					<td class="smheading" align="left" width="350">';
+			} else {
+				echo "AC log: $oldfilename:\n";
+			}
+			echo 'Moving to logs/ac/: ';
+			if ($html) echo '</td><td class="grey" align="left" width="200">';
+			echo backup_logfile($import_ac_log_compress, $filename, 'logs/ac/'.$oldfilename, true) . "\n";
+			if ($html) echo '</td></tr></table><br />';
+			echo "\n\n";
+			unlink($filename);
+			continue;
+	}
+	
 	if(substr($filename, strlen($filename) - strlen($import_log_extension)) != $import_log_extension) 	continue;
 	if(substr($oldfilename, 0, strlen($import_log_start)) != $import_log_start) continue;
 
@@ -766,6 +790,15 @@ if ($import_utdc_download_enable) {
 	if ($purged = (purge_backups('logs/utdc', $import_utdc_log_purge_after))) {
 		if ($html) echo '<p class="pages">';
 		echo "Purged $purged old UTDC logfiles\n";
+		if ($html) echo '</p>';
+	}
+}
+
+// Purge old AnthChecker logs
+if ($import_ac_download_enable) {
+	if ($purged = (purge_backups('logs/ac', $import_ac_log_purge_after))) {
+		if ($html) echo '<p class="pages">';
+		echo "Purged $purged old AC logfiles\n";
 		if ($html) echo '</p>';
 	}
 }

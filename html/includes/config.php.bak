@@ -88,22 +88,6 @@ $import_utdc_log_compress = "compress";
 // Purge old UTDC logs after x days. 0 to disable.
 $import_utdc_log_purge_after = 0;
 
-// UTStats can download and manage your AnthChecker logs
-// Enable downloading of AC logs?
-$import_ac_download_enable = true;
-
-// Log files start with...
-$import_ac_log_start = "[AC]";
-
-// Log files end with...
-$import_ac_log_extension = ".log";
-
-// Compress AnthChecker logfiles after download? [compress/gzip/no]
-// (see $import_log_backup for available options)
-$import_ac_log_compress = "compress";
-
-// Purge old AnthChecker logs after x days. 0 to disable.
-$import_ac_log_purge_after = 0;
 
 // Enable the creation of pictures? (Signature pictures for users where they can see their current ranking and stuff)
 // Requires GD- and FreeType support.

@@ -40,6 +40,16 @@ CREATE TABLE `uts_gamestype` (
 
 -- --------------------------------------------------------
 
+--
+-- Table structure for table `uts_ignoreips`
+--
+
+CREATE TABLE IF NOT EXISTS `uts_ignoreips` (
+  `ip` bigint(15) NOT NULL default '0',
+  PRIMARY KEY  (`ip`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+-- --------------------------------------------------------
+
 -- 
 -- Table structure for table `uts_ip2country`
 -- 
@@ -261,3 +271,4 @@ CREATE TABLE `uts_weaponstats` (
   `acc` float unsigned NOT NULL default '0',
   KEY `full` (`matchid`,`pid`)
 ) TYPE=MyISAM;
+
