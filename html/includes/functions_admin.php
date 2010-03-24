@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
 $options['title'] = 'Test';

@@ -1,4 +1,4 @@
-<?
+<?php
 function row($name = NULL, $amount = 0, $multiplier = 0, $extra_multiplier = true) {
 	static $i = 0;
 	if (empty($name)) {
@@ -121,8 +121,8 @@ $t_points += row('Double Kills', $r_cnt['spree_double'], 1);
 $t_points += row('Multi Kills', $r_cnt['spree_multi'], 1);
 $t_points += row('Ultra Kills', $r_cnt['spree_ultra'], 1);
 $t_points += row('Monster Kills', $r_cnt['spree_monster'], 2);
-$t_points += row('Killing Sprees', $r_cnt['spree_kill'], 1);
 row();
+$t_points += row('Killing Sprees', $r_cnt['spree_kill'], 1);
 $t_points += row('Rampages', $r_cnt['spree_rampage'], 1);
 $t_points += row('Dominatings', $r_cnt['spree_dom'], 1.5);
 $t_points += row('Unstoppables', $r_cnt['spree_uns'], 2);
@@ -169,10 +169,5 @@ echo '<tr>	<td class="darkgrey"><strong>Total</strong></td>
 				<td class="darkgrey" align="center"></td>
 				<td class="darkgrey" align="right"><strong>'. get_dp($t_points) .'</strong></td>
 		</tr>';
-
-
-
-
 echo '</tbody></table>';
-
 ?>

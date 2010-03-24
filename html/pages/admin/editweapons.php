@@ -1,4 +1,4 @@
-<?
+<?php
 if (empty($import_adminkey) or isset($_REQUEST['import_adminkey']) or $import_adminkey != $adminkey) die('bla');
 	
 if (isset($_REQUEST['submit'])) {

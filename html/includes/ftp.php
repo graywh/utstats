@@ -1,4 +1,4 @@
-<? 
+<?php 
 //require_once('config.php');
 if ($ftp_type == 'php') {
 	require(dirname(__FILE__) . '/ftp_class_native.php');

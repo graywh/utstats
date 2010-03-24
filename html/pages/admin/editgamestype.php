@@ -1,4 +1,4 @@
-<?
+<?php
 if (empty($import_adminkey) or isset($_REQUEST['import_adminkey']) or $import_adminkey != $adminkey) die('bla');
 	
 $sql_server = "SELECT id, servername, serverip FROM uts_match GROUP BY servername, serverip ORDER BY servername ASC";

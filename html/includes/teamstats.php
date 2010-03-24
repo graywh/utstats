@@ -1,4 +1,4 @@
-<?
+<?php
 function teamstats($mid, $title, $extra = NULL, $extratitle = NULL, $order = 'gamescore DESC') {
 	global $gamename, $gid;
 	$r_info = small_query("SELECT teamgame, t0score, t1score, t2score, t3score FROM uts_match WHERE id = '$mid'");

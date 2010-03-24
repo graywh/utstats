@@ -1,4 +1,4 @@
-<?
+<?php
 // Picture configuration file
 
 

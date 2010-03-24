@@ -1,4 +1,4 @@
-<?
+<?php
 // Get dom player scores
 	$sql_domplayer = "SELECT col3 FROM uts_temp_$uid WHERE col1 = 'dom_playerscore_update' AND col2 = $playerid ORDER BY id DESC LIMIT 0,1";
 	$q_domplayer = mysql_query($sql_domplayer) or die(mysql_error());

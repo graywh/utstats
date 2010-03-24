@@ -1,4 +1,4 @@
-<?
+<?php
 echo'<textarea rows="50" name="cbrep" cols="75">';
 
 $id = $_GET[id];

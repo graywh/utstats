@@ -1,4 +1,4 @@
-<?
+<?php
 $serverip = $_GET[serverip];
 
 // Firstly we need to work out First Last Next Prev pages

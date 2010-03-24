@@ -1,4 +1,4 @@
-<?
+<?php
 $mid = $_GET[mid];
 $pid = $_GET[pid];
 $r_infos = small_query("SELECT p.playerid, p.country, pi.name, pi.banned, p.gid, g.name AS gamename FROM uts_player p, uts_pinfo pi, uts_games g WHERE p.gid = g.id AND p.pid = pi.id AND p.pid = '$pid'  AND matchid = '$mid' LIMIT 0,1;");

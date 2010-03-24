@@ -1,4 +1,4 @@
-<?
+<?php
 echo'
 <div class="text" align="left">
 <p><span class="txttitle">Frequently Asked Questions</span></p>

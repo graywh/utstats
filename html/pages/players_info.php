@@ -1,4 +1,4 @@
-<?
+<?php
 global $pic_enable;
 $pid = isset($pid) ? addslashes($pid) : addslashes($_GET['pid']);
 

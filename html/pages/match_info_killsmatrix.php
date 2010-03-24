@@ -1,4 +1,4 @@
-<?
+<?php
 function PrintVertical($text) {
 	$len = strlen($text);
 	$ret = '';

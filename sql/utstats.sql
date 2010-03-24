@@ -48,17 +48,6 @@ CREATE TABLE IF NOT EXISTS `uts_ignoreips` (
   `ip` bigint(15) NOT NULL default '0',
   PRIMARY KEY  (`ip`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
--- --------------------------------------------------------
-
--- 
--- Table structure for table `uts_ip2country`
--- 
-
-CREATE TABLE IF NOT EXISTS `uts_ip2country` (
-  `ip_from` int(10) unsigned NOT NULL default '0',
-  `ip_to` int(10) unsigned NOT NULL default '0',
-  `country` char(2) NOT NULL default ''
-) TYPE=MyISAM;
 
 -- --------------------------------------------------------
 

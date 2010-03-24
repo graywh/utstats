@@ -1,4 +1,4 @@
-<?
+<?php
 echo'<br /><br /><br />
 <table border="0" cellpadding="1" width="720">';
 
@@ -6,7 +6,7 @@ echo'<br /><br /><br />
 
 		  echo'<tr>
 			<td class="smheading" align="center"><a href="http://utstats.unrealadmin.org/" target="_blank">
-			UTStats Beta 4.2.3</a> &copy; 2005 azazel, AnthraX and toa</td>
+			UTStats Beta 4.2.4</a> &copy; 2005 azazel, AnthraX and toa</td>
 		  </tr>
 		  </table>
 </center>

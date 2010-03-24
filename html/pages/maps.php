@@ -1,4 +1,4 @@
-<?
+<?php
 function InvertSort($curr_field, $filter, $sort) {
 	if ($curr_field != $filter) return(($curr_field == "mapfile") ? "ASC" : "DESC");
 	if ($sort == 'ASC') return('DESC');

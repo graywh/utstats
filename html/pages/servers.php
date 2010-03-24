@@ -1,4 +1,4 @@
-<?
+<?php
 // Firstly we need to work out First Last Next Prev pages
 
 $scount = small_count("SELECT servername, serverip FROM uts_match GROUP BY servername, serverip");

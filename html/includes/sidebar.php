@@ -1,4 +1,4 @@
-<?
+<?php
 echo'
 <td Valign="top" width="120" class="sidebar">
   <a href="http://www.unrealtournament.com/"><img src="images/utlogo.gif" title="UT Logo" alt="UT Logo" border="0"></a>

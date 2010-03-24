@@ -1,4 +1,4 @@
-<?
+<?php
 // Get team releases
 	$q_releases = small_query("SELECT COUNT(*) AS releases FROM uts_temp_$uid WHERE col1 = 'team_released' AND col3 = $playerid");
 	$r_releases = $q_releases['releases'];

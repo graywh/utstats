@@ -1,4 +1,4 @@
-<?
+<?php
 // Start buffering
 ob_start();
 

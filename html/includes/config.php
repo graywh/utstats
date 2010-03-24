@@ -1,4 +1,4 @@
-<?
+<?php
 // Database connection details
 $dbname = "utstats_dev";
 $hostname = "localhost";

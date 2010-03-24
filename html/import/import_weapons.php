@@ -1,4 +1,4 @@
-<?
+<?php
 
 // Read all available weapons, we'll need them later
 if (!isset($weaponnames))

@@ -1,4 +1,4 @@
-<?
+<?php
 function weaponstats($_mid, $_pid, $title = 'Weapons Summary') {
 	global $gamename, $gid;
 
@@ -24,7 +24,7 @@ function weaponstats($_mid, $_pid, $title = 'Weapons Summary') {
 						WHERE		ws.matchid = '$_mid'
 							AND	ws.pid = '$_pid'
 							AND	w.id = ws.weapon
-							AND w.hide <> 'Y'";
+							AND	w.hide <> 'Y'";
 
 
 	if ($_pid == 0 and $_mid != 0) {
@@ -44,16 +44,17 @@ function weaponstats($_mid, $_pid, $title = 'Weapons Summary') {
 										w.image AS weaponimg,
 										w.sequence AS sequence,
 										w.hide AS hideweapon
-							FROM		uts_weapons as w, 
+							FROM		uts_weapons as w,
 										uts_weaponstats AS ws
 							LEFT JOIN uts_pinfo AS pi
 								ON		ws.pid = pi.id
 							WHERE		ws.matchid = '$_mid'
 								AND	w.id = ws.weapon
-								AND w.hide <> 'Y'
+								AND	w.hide <> 'Y'
 							GROUP BY	ws.pid,
 										ws.weapon";
 	}
+
 	$q_weapons = mysql_query($sql_weapons) or die(mysql_error());
 	while ($r_weapons = zero_out(mysql_fetch_array($q_weapons))) {
 		$weaponid = intval($r_weapons[weaponid]);

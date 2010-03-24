@@ -1,4 +1,4 @@
-<?
+<?php
 $matchid = $_GET[mid];
 
 echo'<br><table border="0" cellpadding="1" cellspacing="2" width="300">

@@ -1,4 +1,7 @@
-<?
+<?php
+	include_once("includes/geoip.inc");
+	$gi = geoip_open("GeoIP.dat",GEOIP_STANDARD);
+
 	// Get the unique ID of this player.
 	// Create a new one if he has none yet.
 	$r_pid = small_query("SELECT id, country, banned FROM uts_pinfo WHERE name = '$playername'");
@@ -13,11 +16,11 @@
 		$playerbanned = false;
 	}
 	$playerid2pid[$playerid] = $pid;
-	
+
 	// Do we import banned players?
 	if ($playerbanned and $import_ban_type == 2) return;
-	
-	
+
+
 	// Did the player do first blood?
 	IF($playerid == $firstblood) {
 		$upd_firstblood = "UPDATE uts_match SET firstblood = '$pid' WHERE id = $matchid";
@@ -28,16 +31,12 @@
 	$q_playerip = small_query("SELECT INET_ATON(col4) AS ip FROM uts_temp_$uid WHERE col1 = 'player' AND col2 = 'IP' and col3 = '$playerid' ORDER BY id ASC LIMIT 0,1");
 	$playerip = ($q_playerip) ? $q_playerip['ip'] : 0;
 	if (empty($playerip)) $playerip = 0;
-	
+
 	// Map the IP to a country
-	$q_playercountry = small_query("SELECT country FROM uts_ip2country WHERE $playerip BETWEEN ip_from AND ip_to;");
-	IF($q_playercountry) {
-		$playercountry = strtolower($q_playercountry[country]);
-	} else {
-		$playercountry = "xx";
-	}
-	
-	if ($playercountry != $pid_country) {
+	$playercountry = strtolower(geoip_country_code_by_addr($gi,long2ip($playerip)));
+
+	if ($playercountry != $pid_country)
+	{
 		mysql_query("UPDATE uts_pinfo SET country = '$playercountry' WHERE id = '$pid'") or die(mysql_error());
 	}
 
@@ -53,7 +52,7 @@
 	$q_spree_dom = small_count("SELECT id FROM uts_temp_$uid WHERE col1 = 'spree' AND col2 = 'spree_dom' AND col3 = '$playerid'");
 	$q_spree_uns = small_count("SELECT id FROM uts_temp_$uid WHERE col1 = 'spree' AND col2 = 'spree_uns' AND col3 = '$playerid'");
 	$q_spree_god = small_count("SELECT id FROM uts_temp_$uid WHERE col1 = 'spree' AND col2 = 'spree_god' AND col3 = '$playerid'");
-	
+
 	$q_headshots = small_count("SELECT id FROM uts_temp_$uid WHERE col1 = 'headshot' AND col2 = '$playerid'");
 
 
@@ -135,8 +134,8 @@
   $r_ttl = $r_tos / ($r_deaths + $r_suicides + 1);
 
 	// Generate player record
-	$sql_playerid = "	INSERT 
-							INTO	uts_player 
+	$sql_playerid = "	INSERT
+							INTO	uts_player
 							SET		matchid = '$matchid',
 									playerid = '$playerid',
 									pid = '$pid',
@@ -145,7 +144,7 @@
 									insta = '$gameinsta',
 									country = '$playercountry',
 									ip = '$playerip',
-									
+
 									headshots = '$q_headshots',
 									spree_double = '$q_spree_dbl',
 									spree_multi = '$q_spree_mult',
@@ -156,7 +155,7 @@
 									spree_dom = '$q_spree_dom',
 									spree_uns = '$q_spree_uns',
 									spree_god = '$q_spree_god',
-									
+
 									pu_pads = '$pu_pads',
 									pu_armour = '$pu_armour',
 									pu_keg = '$pu_keg',
@@ -164,22 +163,22 @@
 									pu_amp = '$pu_amp',
 									pu_invis = '$pu_invis',
 									pu_boots = '$pu_boots',
-									
+
 									lowping = '$lowping',
 									highping = '$highping',
 									avgping = '$avgping',
-						
-									accuracy = '$r_acc', 
-									frags = '$r_frags', 
-									deaths = '$r_deaths', 
-									kills = '$r_kills', 
+
+									accuracy = '$r_acc',
+									frags = '$r_frags',
+									deaths = '$r_deaths',
+									kills = '$r_kills',
 									suicides = '$r_suicides',
-									teamkills = '$r_teamkills', 
-									eff = '$r_efficiency', 
-									gametime = '$r_tos', 
-									ttl = '$r_ttl', 
-									gamescore= '$r_score'"; 
-	
+									teamkills = '$r_teamkills',
+									eff = '$r_efficiency',
+									gametime = '$r_tos',
+									ttl = '$r_ttl',
+									gamescore= '$r_score'";
+
 	$q_playerid = mysql_query($sql_playerid) or die(mysql_error());
 	$playerecordid = mysql_insert_id();
 

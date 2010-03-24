@@ -1,4 +1,4 @@
-<?
+<?php
 $hint['F'] = 	array	(	"caption"	=>	"Frags",
 								"text" 		=>	"A player's frag count is equal to their kills minus suicides.  In team games team kills (not team suicides) are also subtracted from the player's kills."
 						);

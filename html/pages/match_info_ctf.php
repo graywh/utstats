@@ -1,4 +1,4 @@
-<?
+<?php
 echo'
 <table border="0" cellpadding="0" cellspacing="2" width="720">
   <tbody><tr>

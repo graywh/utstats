@@ -1,4 +1,4 @@
-<?
+<?php
 $map = $_GET[map];
 $bugmap = my_addslashes($_GET[map]);
 $realmap = $bugmap.".unr";

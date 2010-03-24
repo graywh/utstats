@@ -1,4 +1,4 @@
-<?
+<?php
 $max_height = 80;
 
 // Hourly Breakdown
@@ -13,6 +13,19 @@ while ($r_ghours = mysql_fetch_array($q_ghours)) {
 		$hour_sum += $r_ghours['res_count'];
 }
 if ($hour_max == 0) return;
+
+// Daily Breakdown
+// We use WEEKDAY rather then DAYOFWEEK because now the week starts with Monday instead of Sunday
+$sql_gdays = "SELECT WEEKDAY(time) AS res_day, COUNT(*) AS res_count
+FROM uts_match m, uts_player p WHERE $bgwhere AND m.id = p.matchid GROUP by res_day";
+$q_gdays = mysql_query($sql_gdays) or die(mysql_error());
+$day_max = 0;
+$day_sum = 0;
+while ($r_gdays = mysql_fetch_array($q_gdays)) {
+		$gb_day[$r_gdays['res_day']] = $r_gdays['res_count'];
+		if ($r_gdays['res_count'] > $day_max) $day_max = $r_gdays['res_count'];
+		$day_sum += $r_gdays['res_count'];
+}
 
 // Monthly Breakdown
 $sql_gmonths = "SELECT MONTH(m.time) AS res_month, COUNT(p.id) AS res_count
@@ -30,10 +43,10 @@ while ($r_gmonths = mysql_fetch_array($q_gmonths)) {
 echo'<table border="0" cellpadding="0" cellspacing="0">
   <tbody>
   <tr>
-    <td class="heading" align="center" colspan="39">Hourly and Monthly Activity '.$gtitle.'</td>
+    <td class="heading" align="center" colspan="47">Hourly, Daily and Monthly Activity '.$gtitle.'</td>
   </tr>
   <tr>
-    <td class="dark" align="center" colspan="39" height="10"></td>
+    <td class="dark" align="center" colspan="47" height="10"></td>
   </tr>
   <tr>
 	<td class="dark" align="center" width="15"></td>';
@@ -43,6 +56,15 @@ for ($i = 0; $i <= 23; $i++) {
 	if (!isset($gb_hour[$i])) $gb_hour[$i] = 0;
 	$title = $gb_hour[$i] .' ('. get_dp($gb_hour[$i] / $hour_sum * 100) .' %)';
 	echo '<td class="dark" align="center" valign="bottom" width="15"><img border="0" src="images/bars/v_bar'. ($i % 16 + 1) .'.png" width="18" height="'.(int)($gb_hour[$i] / $hour_max * $max_height).'" alt="'. $title .'" title="'. $title .'"></td>';
+}
+
+echo '<td class="dark" align="center" valign="bottom" width="15" width="10"></td>';
+
+// Daily
+for ($i = 0; $i <= 6; $i++) {
+	if (!isset($gb_day[$i])) $gb_day[$i] = 0;
+	$title = $gb_day[$i] .' ('. get_dp($gb_day[$i] / $day_sum * 100) .' %)';
+	echo '<td class="dark" align="center" valign="bottom" width="15"><img border="0" src="images/bars/v_bar'. ($i % 16 + 1) .'.png" width="18" height="'.(int)($gb_day[$i] / $day_max * $max_height).'" alt="'. $title .'" title="'. $title .'"></td>';
 }
 
 echo '<td class="dark" align="center" valign="bottom" width="15" width="10"></td>';
@@ -80,6 +102,14 @@ echo'</tr><tr>
 	<td class="grey" align="center">21</td>
 	<td class="grey" align="center">22</td>
 	<td class="grey" align="center">23</td>
+	<td class="grey" align="center" width="10"></td>
+	<td class="grey" align="center">M</td>
+	<td class="grey" align="center">T</td>
+	<td class="grey" align="center">W</td>
+	<td class="grey" align="center">T</td>
+	<td class="grey" align="center">F</td>
+	<td class="grey" align="center">S</td>
+	<td class="grey" align="center">S</td>
 	<td class="grey" align="center" width="10"></td>
 	<td class="grey" align="center">J</td>
 	<td class="grey" align="center">F</td>
