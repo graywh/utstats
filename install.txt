@@ -13,7 +13,7 @@ Contents
 2. Installing the web stuff (new install and upgrade)
 3. Importing Logs
 4. Known Bugs/Issues Still
-
+5. License
 
 ====================================
 1. UTStats Actor Install Information
@@ -47,19 +47,22 @@ Log files are recorded to the UTServer\Logs folder.
 2. UTStats Web Install Information
 ==================================
 
-Note: If you already have the uts_country table from a previous version already 
-in your database do not wipe it.
-During the install instructions just ignore the bit that tells you to upload it.
+UPGRADING from Version 4.2.3
+Since there have been no changes to the database with regards to version 4.2.3,
+you can use all the data you already have.
+Just remove all the files/folders (apart from the logs folder, if you wish to keep your backup logs),
+and upload all the files in the html folder to your webserver.
+You might want to recalcutale the countryflags, which can be done in the admin-section.
 
 
-UPGRADING:
+UPGRADING from older versions:
 Firstly we don't advise using any old logs, you will not benefit from any new 
 features AND it will likely mess up some page data.
 We apologise for not being able to save this information but there are a 
 massive amount of new features that are well worth ditching the old logs for :)
 
 If you do wish to keep the old logs you need to do a full install anyway, so 
-drop all the tables (except uts_ip2country) you had and remove all the 
+drop all the tables you had and remove all the 
 files/folders (making sure you don't delete the logs backups).
 When you edit config.php make sure to change the option:
 $import_incompatible_logs=false;
@@ -67,7 +70,7 @@ to
 $import_incompatible_logs=true;
 
 If you are wisely going to ditch the old logs just clear out your old install 
-and all the tables (except uts_ip2country) and start from here.
+and all the tables and start from here.
 
 
 FULL INSTALL:
@@ -108,7 +111,6 @@ This will setup the following tables in your database:
 uts_games
 uts_gamestype
 uts_ignoreips
-uts_ip2country
 uts_killsmatrix
 uts_match
 uts_pinfo
@@ -120,12 +122,6 @@ uts_weaponstats
 When you try to import utstats it will not drop the tables for you, it will 
 just try to create them.
 If you already have them it will fail and its up to you to drop them tables.
-
-If you wish to use the country flags option you will need to install the sql 
-files uts_ip2country1.sql to uts_ip2country7.sql
-This MUST be done before you import your logs.
-
-
 
 =================
 3. Importing Logs
@@ -153,8 +149,14 @@ Way 4:
 Automate the web process using a web service cron job.
 
 ====================
-6. Known Bugs/Issues
+4. Known Bugs/Issues
 ====================
 
 If you find any bugs or issues please post them at our forums:
 http://www.unrealadmin.org/forums/forumdisplay.php?f=173
+
+====================
+5. License
+====================
+
+This product includes GeoLite data created by MaxMind, available from http://www.maxmind.com/.

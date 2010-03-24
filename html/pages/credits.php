@@ -1,4 +1,4 @@
-<?
+<?php
 echo'
 <div class="text" align="left">
 <p><span class="txttitle">Credits</span></p>
@@ -21,9 +21,17 @@ All original pages are W3C <a href="http://validator.w3.org/check?uri=referer" t
 <p><a name="changelog"></a><b>Change Log</b></p>
 <blockquote><p>
 <dl>
+	<dt>beta 4.2.4</dt>
+	<dd>Added:<br>
+	Breakdown of server occupation per weekday (By Loki)<br>
+	Breakdown of country of origin (By Loki)<br>
+	Included IpToCountry patch into the release, added GeoIP.dat from March 2010 (By Loki)<br><br></dd>
+	<dd>Bug Fixes:<br>
+	Fixed PHP opening tags (By Loki)<br><br></dd>
+	
 	<dt>beta 4.2.3</dt>
 	<dd>Bug Fixes:<br>
-	Lots of bug fixes/database corrections (By Enakin)
+	Lots of bug fixes/database corrections (By Enakin)<br><br></dd>
 	
 	<dt>beta 4.2.2</dt>
 	<dd>Added:<br>
@@ -212,8 +220,8 @@ All original pages are W3C <a href="http://validator.w3.org/check?uri=referer" t
 	pemftp Class by Alexey Dotsenko &lt;alex at paneuromedia dot com&gt;<br>
 	<a href="http://www.phpclasses.org/browse/package/1743.html" target="_blank">http://www.phpclasses.org/browse/package/1743.html</a><br>
 	<br>
-	IP-to-Country Database provided by <a href="http://www.webhosting.info" target="_blank">WebHosting.Info</a><br>
-	Available from <a href="http://ip-to-country.webhosting.info" target="_blank">http://ip-to-country.webhosting.info</a><br>
+	GeoLite data created by MaxMind<br/>
+	Available from <a href="http://www.maxmind.com/app/geolitecountry" target="_blank">http://www.maxmind.com/app/geolitecountry</a><br>
 	<br>
 	overLIB by Erik Bosrup<br>
 	<a href="http://www.bosrup.com/web/overlib/" target="_blank">http://www.bosrup.com/web/overlib/</a>

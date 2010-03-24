@@ -1,4 +1,4 @@
-<?
+<?php
 $sql_tgame = small_query("SELECT teamgame FROM uts_match WHERE id = $matchid");
 IF($sql_tgame == "True") {
 	$rem_srecord = "DELETE FROM uts_player WHERE matchid = $matchid AND team > 3";

@@ -1,4 +1,4 @@
-<?
+<?php
 // Get filter and set sorting
 $playername = my_stripslashes($_POST[name]);
 $playersearch = my_addslashes($_POST[name]);

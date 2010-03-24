@@ -1,4 +1,4 @@
-<?
+<?php
 $sql_rgame = "SELECT DISTINCT(p.gid), g.name FROM uts_player AS p, uts_games AS g WHERE p.gid = g.id ORDER BY g.name ASC";
 $q_rgame = mysql_query($sql_rgame) or die(mysql_error());
 while ($r_rgame = mysql_fetch_array($q_rgame)) {

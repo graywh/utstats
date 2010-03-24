@@ -1,4 +1,4 @@
-<?
+<?php
 	if ($playerbanned) return;
 // Get sums of different events
 

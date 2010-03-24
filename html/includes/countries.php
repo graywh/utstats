@@ -1,4 +1,4 @@
-<?
+<?php
 $a_countries = array(
             'af' => 'Afghanistan',
             'al' => 'Albania, People\'s Socialist Republic of',

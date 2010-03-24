@@ -1,4 +1,4 @@
-<?
+<?php
 /*
   This function is to get the players from a clan.
   It will return an array with all the information.

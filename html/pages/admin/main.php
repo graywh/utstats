@@ -1,4 +1,4 @@
-<?
+<?php
 if (empty($import_adminkey) or isset($_REQUEST['import_adminkey']) or $import_adminkey != $adminkey) die('bla');
 if (isset($_REQUEST['droptable'])) {
 	$droptable = my_addslashes($_REQUEST['droptable']);
@@ -100,6 +100,7 @@ echo '
 		echo '<li><a href="admin.php?key='. urlencode($adminkey) .'&amp;action=editgames">Add/Edit Game Names</a></li>';
 		echo '<li><a href="admin.php?key='. urlencode($adminkey) .'&amp;action=editgamestype">Add/Edit Game Types</a></li>';
 		echo '<li><a href="admin.php?key='. urlencode($adminkey) .'&amp;action=recalcranking">Recalculate Rankings</a></li>';
+		echo '<li><a href="admin.php?key='. urlencode($adminkey) .'&amp;action=recalcflags">Recalculate Countryflags</a></li>';
 		echo '<br>';
 		echo '<li><a href="admin.php?key='. urlencode($adminkey) .'&amp;action=emptydb">Empty the database</a></li>';
 echo '

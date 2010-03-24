@@ -1,4 +1,4 @@
-<?
+<?php
 // Who did the objectives
 	$r_assobj = small_query("SELECT count(id) AS assobjcount FROM uts_temp_$uid WHERE col1 = 'assault_obj' AND col2 = $playerid");
 	$assobjcount = $r_assobj[assobjcount];

@@ -1,4 +1,4 @@
-<?
+<?php
 $mid = $_GET[mid];
 $pid = $_GET[pid];
 

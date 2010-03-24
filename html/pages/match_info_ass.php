@@ -1,4 +1,4 @@
-<?
+<?php
 // Get information about this match
 $sql_assault = small_query("SELECT assaultid, ass_att, gametime, ass_win FROM uts_match WHERE id = $mid");
 $ass_id = $sql_assault[assaultid];

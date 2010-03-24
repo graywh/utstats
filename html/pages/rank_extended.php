@@ -1,4 +1,4 @@
-<?
+<?php
 $gid = my_addslashes($_GET['gid']);
 
 $r_gamename = small_query("SELECT name FROM uts_games WHERE id = '$gid'");

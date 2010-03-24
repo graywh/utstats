@@ -1,4 +1,4 @@
-<?
+<?php
 include('pages/match_info_killsmatrix.php');
 
 include('includes/weaponstats.php');

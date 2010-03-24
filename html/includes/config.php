@@ -1,4 +1,4 @@
-<?
+<?php
 // Database connection details
 $dbname = "";
 $hostname = "";
@@ -9,7 +9,7 @@ $dbconnect = mysql_connect($hostname,$uname,$upass);
 $dbconnect2 = mysql_select_db($dbname);
 
 // The key needed to run the import script
-$import_adminkey = '';
+$import_adminkey = 'fietsbel';
 
 // When runnning from the command-line (cron jobs):
 // The absolute path to UTStats's home directory.

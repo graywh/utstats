@@ -1,4 +1,4 @@
-<?
+<?php
 // Get Player Flag Events Count
 	$sql_playerctf = "SELECT col1, COUNT(col1) AS flag_count FROM uts_temp_$uid WHERE col1 LIKE 'flag_%' AND col2 = $playerid GROUP BY col1";
 	$q_playerctf = mysql_query($sql_playerctf);

@@ -1,4 +1,4 @@
-<?
+<?php
 global $s_lastvisit;
 echo'
 <table border="0" cellpadding="1" cellspacing="2" width="720">

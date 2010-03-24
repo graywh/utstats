@@ -1,4 +1,4 @@
-<?
+<?php
 // Firstly we need to work out First Last Next Prev pages
 $where = ' ';
 $year = !empty($_REQUEST['year']) ? my_addslashes(sprintf("%04d", $_REQUEST['year'])) : 0;

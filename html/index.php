@@ -1,4 +1,4 @@
-<?
+<?php
 include ("includes/config.php");
 include ("includes/functions.php");
 if (!isset($_GET['noheader'])) include ("includes/header.php");

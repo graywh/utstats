@@ -1,4 +1,4 @@
-<?
+<?php
 $id = $_GET["id"];
 $wid = $_GET["wid"];
 $stage = $_GET["stage"];

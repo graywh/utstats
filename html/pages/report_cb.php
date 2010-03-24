@@ -1,4 +1,4 @@
-<?
+<?php
 echo'<form NAME="report" METHOD="get" ACTION="./?p=report">
 	<input type="hidden" name="p" value="report" size="0">
 	<input type="hidden" name="rtype" value="clanbase" size="0">

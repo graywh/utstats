@@ -1,4 +1,4 @@
-<?
+<?php
 	$sql_killmatrix = "SELECT 	col2 AS killer, 
 										col4 AS killed, 
 										COUNT(*) AS kills 
